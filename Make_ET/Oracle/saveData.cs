@@ -41,6 +41,12 @@ namespace Make_ET.Oracle
                         cmd.Parameters.Add(":LOWEST", OracleDbType.Double).Value = security.Lowest;
                         cmd.ExecuteNonQuery();
                     }
+                    //using(OracleCommand cmds = new OracleCommand("INSERT INTO TBL_IG3_SI(ID, SYMBOL, BOARDCODE, SECURITYTYPE, BASICPRICE, MATCHPRICE, OPENPRICE, CLOSERPRICE, MIDPX, HIGHESTPRICE, LOWESTPRICE, NM_TOTALTRADEDQTTY)" +
+                    //    "VALUES(:ID, :SYMBOL, :BOARDCODE, :SECURITYTYPE, :BASICPRICE, :MATCHPRICE, :OPENPRICE, :CLOSERPRICE, :MIDPX, :HIGHESTPRICE, :LOWESTPRICE, :NM_TOTALTRADEDQTTY)", conn))
+                    //{
+                    //    cmds.Parameters.Add(":ID", OracleDbType.Decimal).Value = i;
+                    //    cmds.Parameters.Add(":SYMBOL",OracleDbType.NVarchar2).Value = security.StockSymbol;
+                    //}
                     i++;
                 }
                 
