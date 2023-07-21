@@ -15,16 +15,18 @@ namespace Make_ET.Oracle
 {
     public class saveData
     {
-        CGlobal.SECURITY[] arrsttSECURITY;       
+        CGlobal.SECURITY[] arrsttSECURITY;
         public void  Save()
-        {        
+        {           
+            //ReadFile readFile = new ReadFile();
+            //CreaderAll<SECURITY> securitiesData = readFile.GetDataSECURITY();
             ConnectionOracle.ConnectOracle();
             OracleConnection conn = ConnectionOracle._oracleconnection;
-            conn.Open(); 
+            conn.Open();
             try
             {
                 int i = 1;
-                foreach(CGlobal.SECURITY security in arrsttSECURITY)
+                foreach (CGlobal.SECURITY security in arrsttSECURITY)
                 {
                     using (OracleCommand cmd = new OracleCommand("INSERT INTO STOCK_HCM (TRANID, STOCKNO, STOCKSYMBOL, STOCKTYPE, PRIORCLOSEPRICE, OPENPRICE, LAST, LASTVOL, HIGHEST, LOWEST) " +
                                                                 "VALUES (:TRANID, :STOCKNO, :STOCKSYMBOL, :STOCKTYPE, :PRIORCLOSEPRICE, :OPENPRICE, :LAST, :LASTVOL, :HIGHEST, :LOWEST)", conn))
@@ -41,22 +43,17 @@ namespace Make_ET.Oracle
                         cmd.Parameters.Add(":LOWEST", OracleDbType.Double).Value = security.Lowest;
                         cmd.ExecuteNonQuery();
                     }
-                    //using(OracleCommand cmds = new OracleCommand("INSERT INTO TBL_IG3_SI(ID, SYMBOL, BOARDCODE, SECURITYTYPE, BASICPRICE, MATCHPRICE, OPENPRICE, CLOSERPRICE, MIDPX, HIGHESTPRICE, LOWESTPRICE, NM_TOTALTRADEDQTTY)" +
-                    //    "VALUES(:ID, :SYMBOL, :BOARDCODE, :SECURITYTYPE, :BASICPRICE, :MATCHPRICE, :OPENPRICE, :CLOSERPRICE, :MIDPX, :HIGHESTPRICE, :LOWESTPRICE, :NM_TOTALTRADEDQTTY)", conn))
-                    //{
-                    //    cmds.Parameters.Add(":ID", OracleDbType.Decimal).Value = i;
-                    //    cmds.Parameters.Add(":SYMBOL",OracleDbType.NVarchar2).Value = security.StockSymbol;
-                    //}
                     i++;
                 }
-                
-            }catch(Exception ex)
+
+            }
+            catch (Exception ex)
             {
                 throw ex;
             }
             finally
             {
-                conn.Close();
+
             }
         }
         

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -66,8 +67,8 @@ namespace Make_ET.DataModels
         public CreaderAll<CGlobal.VNX_MARKET_INDEX> m_crdVNXAllIndex;
 
         //public CreaderAll<CGlobal.VNX_MARKET_VNINDEX> m_crfVNX_MARKET_VNINDEX;
-               
-        private const int VALUE_LENGTH_MAX = 10000;
+
+        private const int VALUE_LENGTH_MAX = 10000; 
         public string path;
 
         [DllImport("kernel32")]
@@ -204,8 +205,7 @@ namespace Make_ET.DataModels
             try{
                 this.UpdateFULL_ROW_INDEX();
                 this.UpdateFullRowQuote(this.m_crfSECURITY.DataOld, this.m_crfLS.DataNew, this.m_crfOS.DataNew, this.m_crfFROOM.DataNew);
-                this.UpdateFULL_ROW_PT(this.m_crfPUT_AD.DataOld, this.m_crfSECURITY.DataOld,this.m_crfPUT_EXEC.DataOld,this.m_crfPUT_DC.DataOld);
-                
+                this.UpdateFULL_ROW_PT(this.m_crfPUT_AD.DataOld, this.m_crfSECURITY.DataOld,this.m_crfPUT_EXEC.DataOld,this.m_crfPUT_DC.DataOld);           
             }
             catch(Exception ex)
             {
@@ -215,7 +215,7 @@ namespace Make_ET.DataModels
             {
 
             }
-        }
+        }              
         public void Thread_QUOTE_SECURITY()
         {
             try
@@ -300,7 +300,7 @@ namespace Make_ET.DataModels
         public async Task Thread_QUOTE_SECURITYAsync()
         {
             try
-            {
+            {                
                 await Task.Run(() => this.m_crfSECURITY.ReadFileBig());
             }
             catch (Exception ex)
@@ -883,7 +883,7 @@ namespace Make_ET.DataModels
                 MARKET_STAT mARKET_STAT = this.m_crfMARKET_STAT.DataUpdate[this.m_crfMARKET_STAT.DataUpdate.Length - 1];
                 this.m_arrsttFullRowIndex.STAT_ControlCode = /*mARKET_STAT.ControlCode.ToString();*/new string(mARKET_STAT.ControlCode).Trim();
                 this.m_arrsttFullRowIndex.STAT_Time = mARKET_STAT.Time.ToString();
-                //this.m_arrsttFullRowIndex.STAT_Date = 
+                //this.m_arrsttFullRowIndex.STAT_Date = DateTime.Now.ToString();
                 VNX_MARKET_VNINDEX VNINDEX = this.m_crdVNIndex.DataUpdate[this.m_crdVNIndex.DataUpdate.Length - 1];
                 this.m_arrsttFullRowIndex.VNI_Time = VNINDEX.Time.ToString();
                 this.m_arrsttFullRowIndex.VNI_IndexValue = (VNINDEX.Index / 100.0).ToString();
@@ -1110,26 +1110,18 @@ namespace Make_ET.DataModels
                                 updateCommand.Parameters.Add("TRANID", OracleDbType.Decimal).Value = i;
                                 updateCommand.ExecuteNonQuery();
                                 i++;
-                                //cmd.Parameters.Add(new OracleParameter("STOCKSYMBOL", security.StockSymbol));
-                                //cmd.Parameters.Add(new OracleParameter("STOCKTYPE", security.StockType));
-                                //cmd.Parameters.Add(new OracleParameter("PRIORCLOSEPRICE", security.PriorClosePrice));
-                                //cmd.Parameters.Add(new OracleParameter("OPENPRICE", security.OpenPrice));
-                                //cmd.Parameters.Add(new OracleParameter("LAST", security.Last));
-                                //cmd.Parameters.Add(new OracleParameter("LASTVOL", security.LastVol));
-                                //cmd.Parameters.Add(new OracleParameter("HIGHEST", security.Highest));
-                                //cmd.Parameters.Add(new OracleParameter("LOWEST", security.Lowest));
-                                //cmd.Parameters.Add(new OracleParameter("STOCKNO", security.StockNo));
                             }
                         }               
                     }
                     else
                     {
-
                         foreach (CGlobal.SECURITY security in m_crfSECURITY.DataUpdate)
                         {
-                            using (OracleCommand cmd = new OracleCommand("INSERT INTO STOCK_HCM (TRANID, STOCKNO, STOCKSYMBOL, STOCKTYPE, PRIORCLOSEPRICE, OPENPRICE, LAST, LASTVOL, HIGHEST, LOWEST) " +
-                                                                        "VALUES (:TRANID, :STOCKNO, :STOCKSYMBOL, :STOCKTYPE, :PRIORCLOSEPRICE, :OPENPRICE, :LAST, :LASTVOL, :HIGHEST, :LOWEST)", conn))
+                            //using (OracleCommand cmd = new OracleCommand("INSERT INTO STOCK_HCM (TRANID, STOCKNO, STOCKSYMBOL, STOCKTYPE, PRIORCLOSEPRICE, OPENPRICE, LAST, LASTVOL, HIGHEST, LOWEST) " +
+                            //                                            "VALUES (:TRANID, :STOCKNO, :STOCKSYMBOL, :STOCKTYPE, :PRIORCLOSEPRICE, :OPENPRICE, :LAST, :LASTVOL, :HIGHEST, :LOWEST)", conn))
+                            using (OracleCommand cmd = new OracleCommand("INSERT_STOCK_HCM", conn))
                             {
+                                cmd.CommandType = System.Data.CommandType.StoredProcedure;
                                 cmd.Parameters.Add(":TRANID", OracleDbType.Decimal).Value = i;
                                 cmd.Parameters.Add(":STOCKNO", OracleDbType.Decimal).Value = security.StockNo;
                                 cmd.Parameters.Add(":STOCKSYMBOL", OracleDbType.NVarchar2, 16).Value = security.StockSymbol;

@@ -20,7 +20,7 @@ namespace Make_ET
     {
         static async Task Main(string[] args)
         {
-            //App_Start.Start_App();
+            App_Start.Start_App();
             DataModels.ReadFile reader = new DataModels.ReadFile();
             //reader.Thread_QUOTE_SECURITY();
             await reader.Thread_QUOTE_MARKET_STATAsync();
