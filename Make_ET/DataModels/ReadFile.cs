@@ -208,6 +208,7 @@ namespace Make_ET.DataModels
                 this.UpdateFULL_ROW_INDEX();
                 this.UpdateFullRowQuote(this.m_crfSECURITY.DataOld, this.m_crfLS.DataNew, this.m_crfOS.DataNew, this.m_crfFROOM.DataNew);
                 this.UpdateFULL_ROW_PT(this.m_crfPUT_AD.DataOld, this.m_crfSECURITY.DataOld, this.m_crfPUT_EXEC.DataOld, this.m_crfPUT_DC.DataOld);
+                this.Data();
             }
             catch (Exception ex)
             {
@@ -1091,21 +1092,21 @@ namespace Make_ET.DataModels
                 {
                     truncateCmd.ExecuteNonQuery();
                 }
-                foreach (CGlobal.SECURITY updatesecurity in m_crfSECURITY.DataUpdate)
+                foreach (CGlobal.SECURITY security in m_crfSECURITY.DataUpdate)
                 {
                     using (OracleCommand cmd = new OracleCommand("INSERT_STOCK_HCM", conn))
                     {
                         cmd.CommandType = System.Data.CommandType.StoredProcedure;
                         cmd.Parameters.Add(":TRANID", OracleDbType.Decimal).Value = i;
-                        cmd.Parameters.Add(":STOCKNO", OracleDbType.Decimal).Value = updatesecurity.StockNo;
-                        cmd.Parameters.Add(":STOCKSYMBOL", OracleDbType.NVarchar2, 16).Value = updatesecurity.StockSymbol;
-                        cmd.Parameters.Add(":STOCKTYPE", OracleDbType.NVarchar2, 2).Value = updatesecurity.StockType;
-                        cmd.Parameters.Add(":PRIORCLOSEPRICE", OracleDbType.Double).Value = updatesecurity.PriorClosePrice;
-                        cmd.Parameters.Add(":OPENPRICE", OracleDbType.Double).Value = updatesecurity.OpenPrice;
-                        cmd.Parameters.Add(":LAST", OracleDbType.Double).Value = updatesecurity.Last;
-                        cmd.Parameters.Add(":LASTVOL", OracleDbType.Decimal).Value = updatesecurity.LastVol;
-                        cmd.Parameters.Add(":HIGHEST", OracleDbType.Double).Value = updatesecurity.Highest;
-                        cmd.Parameters.Add(":LOWEST", OracleDbType.Double).Value = updatesecurity.Lowest;
+                        cmd.Parameters.Add(":STOCKNO", OracleDbType.Decimal).Value = security.StockNo;
+                        cmd.Parameters.Add(":STOCKSYMBOL", OracleDbType.NVarchar2, 16).Value = security.StockSymbol;
+                        cmd.Parameters.Add(":STOCKTYPE", OracleDbType.NVarchar2, 2).Value = security.StockType;
+                        cmd.Parameters.Add(":PRIORCLOSEPRICE", OracleDbType.Double).Value = security.PriorClosePrice;
+                        cmd.Parameters.Add(":OPENPRICE", OracleDbType.Double).Value = security.OpenPrice;
+                        cmd.Parameters.Add(":LAST", OracleDbType.Double).Value = security.Last;
+                        cmd.Parameters.Add(":LASTVOL", OracleDbType.Decimal).Value = security.LastVol;
+                        cmd.Parameters.Add(":HIGHEST", OracleDbType.Double).Value = security.Highest;
+                        cmd.Parameters.Add(":LOWEST", OracleDbType.Double).Value = security.Lowest;
                         cmd.ExecuteNonQuery();
                     }
                     i++;
@@ -1136,6 +1137,12 @@ namespace Make_ET.DataModels
             {
                 conn.Close();
             }
+        }
+        public bool Data()
+        {
+            saveData data = new saveData();
+            data.Save(m_crfSECURITY);
+            return true;
         }
 
         //public void SaveData()

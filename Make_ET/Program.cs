@@ -53,7 +53,7 @@ namespace Make_ET
             reader.Redis_S5G_ET_QUOTE();
             reader.Redis_S5G_ET_PT();
             reader.Redis_S5G__ET_INDEX();
-            reader.SaveData();
+            //reader.SaveData();
 
             //saveData saveDataOracle = new saveData();
             //saveDataOracle.Save();

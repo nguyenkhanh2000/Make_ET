@@ -14,23 +14,25 @@ using static Make_ET.DataModels.CGlobal;
 namespace Make_ET.Oracle
 {
     public class saveData
-    {
-        CGlobal.SECURITY[] arrsttSECURITY;
-        public void  Save()
-        {           
-            //ReadFile readFile = new ReadFile();
-            //CreaderAll<SECURITY> securitiesData = readFile.GetDataSECURITY();
+    {      
+        public void Save(CreaderAll<SECURITY> m_SECURITY)
+        {
             ConnectionOracle.ConnectOracle();
             OracleConnection conn = ConnectionOracle._oracleconnection;
+            //string sqlQuery = "SELECT COUNT(*) FROM STOCK_HCM";
+            int i = 1;
             conn.Open();
             try
             {
-                int i = 1;
-                foreach (CGlobal.SECURITY security in arrsttSECURITY)
+                using (OracleCommand truncateCmd = new OracleCommand("TRUNCATE TABLE STOCK_HCM", conn))
                 {
-                    using (OracleCommand cmd = new OracleCommand("INSERT INTO STOCK_HCM (TRANID, STOCKNO, STOCKSYMBOL, STOCKTYPE, PRIORCLOSEPRICE, OPENPRICE, LAST, LASTVOL, HIGHEST, LOWEST) " +
-                                                                "VALUES (:TRANID, :STOCKNO, :STOCKSYMBOL, :STOCKTYPE, :PRIORCLOSEPRICE, :OPENPRICE, :LAST, :LASTVOL, :HIGHEST, :LOWEST)", conn))
+                    truncateCmd.ExecuteNonQuery();
+                }
+                foreach (CGlobal.SECURITY security in m_SECURITY.DataUpdate)
+                {
+                    using (OracleCommand cmd = new OracleCommand("INSERT_STOCK_HCM", conn))
                     {
+                        cmd.CommandType = System.Data.CommandType.StoredProcedure;
                         cmd.Parameters.Add(":TRANID", OracleDbType.Decimal).Value = i;
                         cmd.Parameters.Add(":STOCKNO", OracleDbType.Decimal).Value = security.StockNo;
                         cmd.Parameters.Add(":STOCKSYMBOL", OracleDbType.NVarchar2, 16).Value = security.StockSymbol;
@@ -44,8 +46,7 @@ namespace Make_ET.Oracle
                         cmd.ExecuteNonQuery();
                     }
                     i++;
-                }
-
+                }                           
             }
             catch (Exception ex)
             {
@@ -53,7 +54,7 @@ namespace Make_ET.Oracle
             }
             finally
             {
-
+                conn.Close();
             }
         }
         
