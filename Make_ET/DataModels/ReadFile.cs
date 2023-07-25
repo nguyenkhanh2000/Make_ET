@@ -5,6 +5,7 @@ using Oracle.ManagedDataAccess.Client;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -31,7 +32,7 @@ namespace Make_ET.DataModels
         CGlobal.FULL_ROW_PT m_arrstt_ROWPT;
         CGlobal.FULL_ROW_INDEX m_arrsttFullRowIndex;
         CGlobal.LastIndexHO m_LIH;
-        
+
         public CreaderAll<CGlobal.LS> arrsttLS;
         public CreaderAll<CGlobal.FROOM> arrsttFROOM;
         /*public CreaderF<CGlobal.SECURITY> m_crfSECURITY;*/        // groupQUOTE: da read => build full row => update redis chart (ZSet)
@@ -68,7 +69,7 @@ namespace Make_ET.DataModels
 
         //public CreaderAll<CGlobal.VNX_MARKET_VNINDEX> m_crfVNX_MARKET_VNINDEX;
 
-        private const int VALUE_LENGTH_MAX = 10000; 
+        private const int VALUE_LENGTH_MAX = 10000;
         public string path;
 
         [DllImport("kernel32")]
@@ -149,7 +150,7 @@ namespace Make_ET.DataModels
             //SECURITYOL
             this.m_crfSECURITYOL.FileName = "SECURITYOL";
             this.m_crfSECURITYOL.FilePath = @"D:\FPTS Job\FPT_HOSTC_IS\BACKUP22\SECURITYOL.dat";
-            
+
             //LE
             this.m_crfLE.FileName = "LE";
             this.m_crfLE.FilePath = @"D:\FPTS Job\FPT_HOSTC_IS\BACKUP22\LE.dat";
@@ -202,12 +203,13 @@ namespace Make_ET.DataModels
         }
         public void Thread_FULL_ROW_QUOTE()
         {
-            try{
+            try
+            {
                 this.UpdateFULL_ROW_INDEX();
                 this.UpdateFullRowQuote(this.m_crfSECURITY.DataOld, this.m_crfLS.DataNew, this.m_crfOS.DataNew, this.m_crfFROOM.DataNew);
-                this.UpdateFULL_ROW_PT(this.m_crfPUT_AD.DataOld, this.m_crfSECURITY.DataOld,this.m_crfPUT_EXEC.DataOld,this.m_crfPUT_DC.DataOld);           
+                this.UpdateFULL_ROW_PT(this.m_crfPUT_AD.DataOld, this.m_crfSECURITY.DataOld, this.m_crfPUT_EXEC.DataOld, this.m_crfPUT_DC.DataOld);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }
@@ -215,7 +217,7 @@ namespace Make_ET.DataModels
             {
 
             }
-        }              
+        }
         public void Thread_QUOTE_SECURITY()
         {
             try
@@ -263,7 +265,8 @@ namespace Make_ET.DataModels
         }
         public void Thread_QUOTE_LE()
         {
-            Task.Run(() => {
+            Task.Run(() =>
+            {
                 try
                 {
                     this.m_crfLE.ReadFileBig();
@@ -300,7 +303,7 @@ namespace Make_ET.DataModels
         public async Task Thread_QUOTE_SECURITYAsync()
         {
             try
-            {                
+            {
                 await Task.Run(() => this.m_crfSECURITY.ReadFileBig());
             }
             catch (Exception ex)
@@ -318,15 +321,16 @@ namespace Make_ET.DataModels
             {
                 throw ex;
             }
-        }           
+        }
         public async Task Thread_QUOTE_SECURITYOLAsync()
         {
             try
             {
-                await Task.Run(() =>  this.m_crfSECURITYOL.ReadFileBig());
-            }catch(Exception ex) 
-            { 
-                throw ex; 
+                await Task.Run(() => this.m_crfSECURITYOL.ReadFileBig());
+            }
+            catch (Exception ex)
+            {
+                throw ex;
             }
         }
         public async Task Thread_QUOTE_LEAsync()
@@ -334,27 +338,30 @@ namespace Make_ET.DataModels
             try
             {
                 await Task.Run(() => this.m_crfLE.ReadFileBig());
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
-                throw ex;            
+                throw ex;
             }
         }
         public async Task Thread_QUOTE_OSAsync()
         {
             try
             {
-                await Task.Run(()=>this.m_crfOS.ReadFileBig()); 
-            }catch(Exception ex) 
-            { 
-                throw ex; 
+                await Task.Run(() => this.m_crfOS.ReadFileBig());
+            }
+            catch (Exception ex)
+            {
+                throw ex;
             }
         }
         public async Task Thread_QUOTE_FROOMAsync()
         {
             try
             {
-                await Task.Run(()=>this.m_crfFROOM.ReadFileBig());
-            }catch(Exception ex)
+                await Task.Run(() => this.m_crfFROOM.ReadFileBig());
+            }
+            catch (Exception ex)
             {
                 throw ex;
             }
@@ -412,7 +419,7 @@ namespace Make_ET.DataModels
             catch (Exception ex)
             {
                 log.CLogErrors(ex);
-                
+
             }
         }
         public async Task Thread_VNX_IINDEXAsync()
@@ -507,13 +514,13 @@ namespace Make_ET.DataModels
         {
             TOTAL_QUANTITY,
             TOTAL_VALUE
-        }        
+        }
         private long GetSum(int intStockNo, CGlobal.PUT_EXEC[] arrsttPUT_EXEC, PUT_EXEC_SUM PES)
         {
             try
             {
                 long intSum = 0;
-                for(int i = 0; i < arrsttPUT_EXEC.Length;i++)
+                for (int i = 0; i < arrsttPUT_EXEC.Length; i++)
                 {
                     if (PES == PUT_EXEC_SUM.TOTAL_QUANTITY)
                         intSum += Convert.ToInt64(arrsttPUT_EXEC[i].Vol);
@@ -521,7 +528,8 @@ namespace Make_ET.DataModels
                         intSum += Convert.ToInt64(arrsttPUT_EXEC[i].Vol) * Convert.ToInt64(arrsttPUT_EXEC[i].Price) * 10;
                 }
                 return intSum;
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 throw ex;
             }
@@ -554,11 +562,11 @@ namespace Make_ET.DataModels
                     v = v.Remove(0, 1); // error if length=0
                 return v;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }
-        }        
+        }
         public bool Update(CGlobal.SECURITY[] arrsttSECURITY)
         {
             if (arrsttSECURITY != null)
@@ -688,7 +696,7 @@ namespace Make_ET.DataModels
                         int indexLS = Array.LastIndexOf(stockNoLS, m_arrsttFullRowQuote[j].SN);
                         if (indexLS != -1)
                         {
-                            if(this.m_arrsttFullRowIndex.STAT_ControlCode == CGlobal.MARKET_STAT_CON) //phien lien tuc
+                            if (this.m_arrsttFullRowIndex.STAT_ControlCode == CGlobal.MARKET_STAT_CON) //phien lien tuc
                             {
                                 this.m_arrsttFullRowQuote[j].MPO = arrsttLS[indexLS].Price.ToString();              // 11 - match price [LS]
                                 this.m_arrsttFullRowQuote[j].MQO = arrsttLS[indexLS].MatchedVol.ToString();         // 12 - match quantity  [LS]
@@ -730,13 +738,13 @@ namespace Make_ET.DataModels
                             }
                         }
                     }
-                }              
+                }
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             { throw ex; }
 
             return true;
-        } 
+        }
         public bool UpdateFULL_ROW_PT(CGlobal.PUT_AD[] arrsttPUT_AD, CGlobal.SECURITY[] arrsttSECURITY, CGlobal.PUT_EXEC[] arrsttPUT_EXEC, CGlobal.PUT_DC[] arrsttPUT_DC)
         {
             try
@@ -749,8 +757,8 @@ namespace Make_ET.DataModels
                     int intAutoBuy = 0;
                     int intAutoSell = 0;
                     string Codes = "";
-                    for (int i = 0; i < arrsttPUT_AD.Length;i++)
-                    {                       
+                    for (int i = 0; i < arrsttPUT_AD.Length; i++)
+                    {
                         string side = new string(arrsttPUT_AD[i].Side).Trim();
                         if (side == "B")
                         {
@@ -762,7 +770,7 @@ namespace Make_ET.DataModels
                                     Codes = new string(arrsttSECURITY[j].StockSymbol).Trim();
                                     break;
                                 }
-                            }                           
+                            }
                             buyList.Add(new CGlobal.FULL_PUT_AD
                             {
                                 Auto = intAutoBuy.ToString(),
@@ -771,9 +779,9 @@ namespace Make_ET.DataModels
                                 Quantity = arrsttPUT_AD[i].Vol.ToString(),
                                 Time = arrsttPUT_AD[i].Time.ToString(),
                                 TradeID = arrsttPUT_AD[i].TradeID.ToString()
-                            });                          
+                            });
                         }
-                        else if(side == "S")
+                        else if (side == "S")
                         {
                             intAutoSell++;
                             for (int j = 0; j < arrsttSECURITY.Length; j++)
@@ -795,7 +803,7 @@ namespace Make_ET.DataModels
                             });
                         }
                         m_arrstt_PUT_AD_BUY = buyList.ToArray();
-                        m_arrstt_PUT_AD_SELL = sellList.ToArray();                       
+                        m_arrstt_PUT_AD_SELL = sellList.ToArray();
                     }
                 }
                 int[] stockNoSECURITY;
@@ -806,13 +814,13 @@ namespace Make_ET.DataModels
                 }
                 //UPDATE PUT_EXEC                              
                 if (arrsttPUT_EXEC != null)
-                {                   
-                    if(m_arrstt_PUT_EXEC == null && arrsttPUT_EXEC != null)
+                {
+                    if (m_arrstt_PUT_EXEC == null && arrsttPUT_EXEC != null)
                     {
-                        Array.Resize(ref m_arrstt_PUT_EXEC,arrsttPUT_EXEC.Length);
+                        Array.Resize(ref m_arrstt_PUT_EXEC, arrsttPUT_EXEC.Length);
                     }
                     if (m_arrstt_PUT_EXEC == null) return false;
-                    for(int i = 0; i < arrsttPUT_EXEC.Length; i++) 
+                    for (int i = 0; i < arrsttPUT_EXEC.Length; i++)
                     {
                         int indexPUT_EXEC = Array.LastIndexOf(stockNoSECURITY, arrsttPUT_EXEC[i].StockNo);
                         m_arrstt_PUT_EXEC[i].Auto = (i + 1).ToString();
@@ -822,8 +830,8 @@ namespace Make_ET.DataModels
                         m_arrstt_PUT_EXEC[i].Fl = m_arrsttFullRowQuote[indexPUT_EXEC].Fl.ToString();
                         m_arrstt_PUT_EXEC[i].PTPrice = arrsttPUT_EXEC[i].Price.ToString();
                         m_arrstt_PUT_EXEC[i].PTQuantity = arrsttPUT_EXEC[i].Vol.ToString();
-                        m_arrstt_PUT_EXEC[i].PTTotalQuantity = this.GetSum(arrsttPUT_EXEC[i].StockNo,arrsttPUT_EXEC,PUT_EXEC_SUM.TOTAL_QUANTITY).ToString();
-                        m_arrstt_PUT_EXEC[i].PTTotalValue = this.GetSum(arrsttPUT_EXEC[i].StockNo,arrsttPUT_EXEC,PUT_EXEC_SUM.TOTAL_VALUE).ToString();
+                        m_arrstt_PUT_EXEC[i].PTTotalQuantity = this.GetSum(arrsttPUT_EXEC[i].StockNo, arrsttPUT_EXEC, PUT_EXEC_SUM.TOTAL_QUANTITY).ToString();
+                        m_arrstt_PUT_EXEC[i].PTTotalValue = this.GetSum(arrsttPUT_EXEC[i].StockNo, arrsttPUT_EXEC, PUT_EXEC_SUM.TOTAL_VALUE).ToString();
                         m_arrstt_PUT_EXEC[i].NMTotalQuantity = this.m_arrsttFullRowQuote[indexPUT_EXEC].TQ;
                         m_arrstt_PUT_EXEC[i].NMPTTotalQuantity = (Convert.ToInt64(m_arrstt_PUT_EXEC[i].PTTotalQuantity) + Convert.ToInt64(m_arrstt_PUT_EXEC[i].NMTotalQuantity)).ToString();
                         m_arrstt_PUT_EXEC[i].ListingQuantity = "0";
@@ -832,7 +840,7 @@ namespace Make_ET.DataModels
                     }
                 }
                 //UPDATE PUT_DC
-                if(arrsttPUT_DC != null)
+                if (arrsttPUT_DC != null)
                 {
                     if (m_arrstt_PUT_DC == null && arrsttPUT_DC != null)
                     {
@@ -853,7 +861,7 @@ namespace Make_ET.DataModels
                             m_arrstt_PUT_DC[i].Fl = "0";
                             m_arrstt_PUT_DC[i].PTPrice = arrsttPUT_DC[i].Price.ToString();
                             m_arrstt_PUT_DC[i].PTQuantity = arrsttPUT_DC[i].Vol.ToString();
-                            m_arrstt_PUT_DC[i].PTTotalQuantity = "0"; 
+                            m_arrstt_PUT_DC[i].PTTotalQuantity = "0";
                             m_arrstt_PUT_DC[i].PTTotalValue = "0";
                             m_arrstt_PUT_DC[i].NMTotalQuantity = "0";
                             m_arrstt_PUT_DC[i].NMPTTotalQuantity = "0";
@@ -861,17 +869,17 @@ namespace Make_ET.DataModels
                             m_arrstt_PUT_DC[i].Time = "";
                             m_arrstt_PUT_DC[i].ConfirmNo = arrsttPUT_DC[i].ConfirmNo.ToString();
                             /*Array.Resize(ref m_arrstt_PUT_DC, arrsttPUT_DC.Length - 1);*/
-                        }                        
-                    }                  
+                        }
+                    }
                 }
                 m_arrstt_ROWPT.PUT_AD_BUY = m_arrstt_PUT_AD_BUY;
                 m_arrstt_ROWPT.PUT_AD_SELL = m_arrstt_PUT_AD_SELL;
                 m_arrstt_ROWPT.PUT_EXEC = m_arrstt_PUT_EXEC;
                 m_arrstt_ROWPT.PUT_DC = m_arrstt_PUT_DC;
             }
-            catch(Exception ex) 
-            { 
-                throw ex; 
+            catch (Exception ex)
+            {
+                throw ex;
             }
             return true;
         }
@@ -985,7 +993,7 @@ namespace Make_ET.DataModels
                 CGlobal.INAV INAV = this.m_crdINAV.DataUpdate[this.m_crdINAV.DataUpdate.Length - 1];
                 this.m_arrsttFullRowIndex.INAV_iNAV = INAV.iNAV.ToString();
                 this.m_arrsttFullRowIndex.INAV_StockNo = INAV.StockNo.ToString();
-                this.m_arrsttFullRowIndex.INAV_StockSymbol = new string(INAV.StockSymbol).Trim();/*this.m_crdINAV.Char2String(INAV.StockSymbol);*/               
+                this.m_arrsttFullRowIndex.INAV_StockSymbol = new string(INAV.StockSymbol).Trim();/*this.m_crdINAV.Char2String(INAV.StockSymbol);*/
                 this.m_arrsttFullRowIndex.INAV_Time = INAV.Time.ToString();
 
                 CGlobal.IINDEX IINDEX = this.m_crdIINDEX.DataUpdate[this.m_crdIINDEX.DataUpdate.Length - 1];
@@ -995,7 +1003,7 @@ namespace Make_ET.DataModels
                 this.m_arrsttFullRowIndex.IINDEX_iIndexSymbol = IINDEX.Time.ToString();
                 this.m_arrsttFullRowIndex.IINDEX_Time = IINDEX.Time.ToString();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }
@@ -1020,7 +1028,7 @@ namespace Make_ET.DataModels
             IDatabase db = Connection.GetRedisDatabase();
 
             double dblScore = Convert.ToDouble(DateTime.Now.ToString("yyyyMMddHHmmssfff"));
-            string jsonData = JsonConvert.SerializeObject(this.m_arrsttFullRowQuote);           
+            string jsonData = JsonConvert.SerializeObject(this.m_arrsttFullRowQuote);
             db.SortedSetAdd(key_ET_QUOTE, jsonData, dblScore);
             Connection.RedisClose();
         }
@@ -1044,7 +1052,7 @@ namespace Make_ET.DataModels
             Connection.RedisClose();
         }
         public void Read_LAST_INDEX_HO()
-        {          
+        {
             Connection.ConnectionRedis();
             IDatabase db = Connection.GetRedisDatabase();
 
@@ -1054,9 +1062,9 @@ namespace Make_ET.DataModels
             if (!string.IsNullOrEmpty(convertedJsonString))
             {
                 m_LIH = JsonConvert.DeserializeObject<LastIndexHO>(convertedJsonString);
-                if(m_LIH != null && m_LIH.Data != null)
+                if (m_LIH != null && m_LIH.Data != null)
                 {
-                    foreach(LastIndexHODetail detail in m_LIH.Data)
+                    foreach (LastIndexHODetail detail in m_LIH.Data)
                     {
                         string tradingDate = detail.TradingDate;
                         double vnIndex = detail.VNIndex;
@@ -1067,78 +1075,46 @@ namespace Make_ET.DataModels
                         double vn100 = detail.VN100;
                         double vnxall = detail.VNXALL;
                     }
-                }               
-            }           
+                }
+            }
         }
         public void SaveData()
         {
             ConnectionOracle.ConnectOracle();
             OracleConnection conn = ConnectionOracle._oracleconnection;
-            string sqlQuery = "SELECT COUNT(*) FROM STOCK_HCM";
+            //string sqlQuery = "SELECT COUNT(*) FROM STOCK_HCM";
             int i = 1;
             conn.Open();
             try
-            {
-                using (OracleCommand command = new OracleCommand(sqlQuery, conn))
+            {               
+                using (OracleCommand truncateCmd = new OracleCommand("TRUNCATE TABLE STOCK_HCM", conn))
                 {
-                    int rowCount = Convert.ToInt32(command.ExecuteScalar());
-                    if(rowCount > 0)
-                    {
-                        foreach(CGlobal.SECURITY security in m_crfSECURITY.DataUpdate)
-                        {
-                            using (OracleCommand updateCommand = new OracleCommand("UPDATE STOCK_HCM " +
-                                            "SET STOCKSYMBOL = :STOCKSYMBOL, " +
-                                            "    STOCKTYPE = :STOCKTYPE, " +
-                                            "    PRIORCLOSEPRICE = :PRIORCLOSEPRICE, " +
-                                            "    OPENPRICE = :OPENPRICE, " +
-                                            "    LAST = :LAST, " +
-                                            "    LASTVOL = :LASTVOL, " +
-                                            "    HIGHEST = :HIGHEST, " +
-                                            "    LOWEST = :LOWEST, " +
-                                            "    STOCKNO = :STOCKNO " + 
-                                            "WHERE TRANID = :TRANID", conn))
-                            {
-                                updateCommand.Parameters.Add("STOCKSYMBOL", OracleDbType.NVarchar2, 16).Value = security.StockSymbol;
-                                updateCommand.Parameters.Add("STOCKTYPE", OracleDbType.NVarchar2, 2).Value = security.StockType;
-                                updateCommand.Parameters.Add("PRIORCLOSEPRICE", OracleDbType.Double).Value = security.PriorClosePrice;
-                                updateCommand.Parameters.Add("OPENPRICE", OracleDbType.Double).Value = security.OpenPrice;
-                                updateCommand.Parameters.Add("LAST", OracleDbType.Double).Value = security.Last;
-                                updateCommand.Parameters.Add("LASTVOL", OracleDbType.Decimal).Value = security.LastVol;
-                                updateCommand.Parameters.Add("HIGHEST", OracleDbType.Double).Value = security.Highest;
-                                updateCommand.Parameters.Add("LOWEST", OracleDbType.Double).Value = security.Lowest;
-                                updateCommand.Parameters.Add("STOCKNO", OracleDbType.Decimal).Value = security.StockNo;
-                                updateCommand.Parameters.Add("TRANID", OracleDbType.Decimal).Value = i;
-                                updateCommand.ExecuteNonQuery();
-                                i++;
-                            }
-                        }               
-                    }
-                    else
-                    {
-                        foreach (CGlobal.SECURITY security in m_crfSECURITY.DataUpdate)
-                        {
-                            //using (OracleCommand cmd = new OracleCommand("INSERT INTO STOCK_HCM (TRANID, STOCKNO, STOCKSYMBOL, STOCKTYPE, PRIORCLOSEPRICE, OPENPRICE, LAST, LASTVOL, HIGHEST, LOWEST) " +
-                            //                                            "VALUES (:TRANID, :STOCKNO, :STOCKSYMBOL, :STOCKTYPE, :PRIORCLOSEPRICE, :OPENPRICE, :LAST, :LASTVOL, :HIGHEST, :LOWEST)", conn))
-                            using (OracleCommand cmd = new OracleCommand("INSERT_STOCK_HCM", conn))
-                            {
-                                cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                                cmd.Parameters.Add(":TRANID", OracleDbType.Decimal).Value = i;
-                                cmd.Parameters.Add(":STOCKNO", OracleDbType.Decimal).Value = security.StockNo;
-                                cmd.Parameters.Add(":STOCKSYMBOL", OracleDbType.NVarchar2, 16).Value = security.StockSymbol;
-                                cmd.Parameters.Add(":STOCKTYPE", OracleDbType.NVarchar2, 2).Value = security.StockType;
-                                cmd.Parameters.Add(":PRIORCLOSEPRICE", OracleDbType.Double).Value = security.PriorClosePrice;
-                                cmd.Parameters.Add(":OPENPRICE", OracleDbType.Double).Value = security.OpenPrice;
-                                cmd.Parameters.Add(":LAST", OracleDbType.Double).Value = security.Last;
-                                cmd.Parameters.Add(":LASTVOL", OracleDbType.Decimal).Value = security.LastVol;
-                                cmd.Parameters.Add(":HIGHEST", OracleDbType.Double).Value = security.Highest;
-                                cmd.Parameters.Add(":LOWEST", OracleDbType.Double).Value = security.Lowest;
-                                cmd.ExecuteNonQuery();
-                            }
-                            i++;
-                        }
-                    }
+                    truncateCmd.ExecuteNonQuery();
                 }
+                foreach (CGlobal.SECURITY updatesecurity in m_crfSECURITY.DataUpdate)
+                {
+                    using (OracleCommand cmd = new OracleCommand("INSERT_STOCK_HCM", conn))
+                    {
+                        cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                        cmd.Parameters.Add(":TRANID", OracleDbType.Decimal).Value = i;
+                        cmd.Parameters.Add(":STOCKNO", OracleDbType.Decimal).Value = updatesecurity.StockNo;
+                        cmd.Parameters.Add(":STOCKSYMBOL", OracleDbType.NVarchar2, 16).Value = updatesecurity.StockSymbol;
+                        cmd.Parameters.Add(":STOCKTYPE", OracleDbType.NVarchar2, 2).Value = updatesecurity.StockType;
+                        cmd.Parameters.Add(":PRIORCLOSEPRICE", OracleDbType.Double).Value = updatesecurity.PriorClosePrice;
+                        cmd.Parameters.Add(":OPENPRICE", OracleDbType.Double).Value = updatesecurity.OpenPrice;
+                        cmd.Parameters.Add(":LAST", OracleDbType.Double).Value = updatesecurity.Last;
+                        cmd.Parameters.Add(":LASTVOL", OracleDbType.Decimal).Value = updatesecurity.LastVol;
+                        cmd.Parameters.Add(":HIGHEST", OracleDbType.Double).Value = updatesecurity.Highest;
+                        cmd.Parameters.Add(":LOWEST", OracleDbType.Double).Value = updatesecurity.Lowest;
+                        cmd.ExecuteNonQuery();
+                    }
+                    i++;
+                }
+                    //int rowCount = Convert.ToInt32(command.ExecuteScalar());
+                    //if (rowCount > 0)                   
+                    //else                   
                 
+
                 //foreach(CGlobal.SECURITY security in m_crfSECURITY.DataUpdate)
                 //{
                 //    using (OracleCommand cmds = new OracleCommand("INSERT INTO TBL_IG3_SI(ID , SYMBOL, BOARDCODE, SECURITYTYPE, BASICPRICE, MATHCHPRICE, OPENPRICE, CLOSERPRICE, MIDPX, HIGHESTPRICE, LOWESTPRICE, NM_TOTAL_TRADEQTTY)" +
@@ -1161,5 +1137,58 @@ namespace Make_ET.DataModels
                 conn.Close();
             }
         }
+
+        //public void SaveData()
+        //{
+        //    ConnectionOracle.ConnectOracle();
+        //    OracleConnection conn = ConnectionOracle._oracleconnection;
+        //    conn.Open();
+        //    int i = 1;
+        //    try
+        //    {
+        //        OracleParameter param = new OracleParameter();
+        //        param.ParameterName = "p_stock_data_table";
+        //        param.OracleDbType = OracleDbType.Array;
+        //        param.Direction = ParameterDirection.Input;
+        //        param.UdtTypeName = "STOCK_DATA_TABLE"; // Use the table type name defined in the database
+
+        //        // Create an array of OracleObjects for the STOCK_DATA_TABLE
+        //        OracleObject[] stockDataArray = new OracleObject[m_crfSECURITY.DataUpdate.Count];
+
+        //        for (int index = 0; index < m_crfSECURITY.DataUpdate.Count; index++)
+        //        {
+        //            OracleObject stockData = conn.CreateObject("STOCK_DATA");
+        //            stockData["P_TRANID"] = i;
+        //            stockData["P_STOCKNO"] = m_crfSECURITY.DataUpdate[index].StockNo;
+        //            stockData["P_STOCKSYMBOL"] = m_crfSECURITY.DataUpdate[index].StockSymbol;
+        //            stockData["P_STOCKTYPE"] = m_crfSECURITY.DataUpdate[index].StockType;
+        //            stockData["P_PRIORCLOSEPRICE"] = m_crfSECURITY.DataUpdate[index].PriorClosePrice;
+        //            stockData["P_OPENPRICE"] = m_crfSECURITY.DataUpdate[index].OpenPrice;
+        //            stockData["P_LAST"] = m_crfSECURITY.DataUpdate[index].Last;
+        //            stockData["P_LASTVOL"] = m_crfSECURITY.DataUpdate[index].LastVol;
+        //            stockData["P_HIGHEST"] = m_crfSECURITY.DataUpdate[index].Highest;
+        //            stockData["P_LOWEST"] = m_crfSECURITY.DataUpdate[index].Lowest;
+
+        //            stockDataArray[index] = stockData;
+        //            i++;
+        //        }
+
+        //        // Set the value of the parameter to the array of OracleObjects
+        //        param.Value = stockDataArray;
+
+        //        using (OracleCommand cmd = new OracleCommand("SP_STOCK_HCM", conn))
+        //        {
+        //            cmd.CommandType = CommandType.StoredProcedure;
+        //            cmd.Parameters.Add(param);
+
+        //            cmd.ExecuteNonQuery();
+        //        }
+        //    }
+        //    catch (Exception e) { throw e; }
+        //    finally
+        //    {
+        //        conn.Close();
+        //    }
+        //}
     }
 }
