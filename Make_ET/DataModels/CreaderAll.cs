@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Make_ET.Log;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -108,8 +109,8 @@ namespace Make_ET.DataModels
             }
             catch (Exception ex) 
             {
-                CLog log = new CLog();
-                log.CLogErrors(ex);
+                Logger logger = new Logger("D:\\FPTS Job\\log.txt");
+                logger.LogError("An error occurred: " + ex.Message);
                 this.m_intReadErrorTotal++;
                 return false;
             }

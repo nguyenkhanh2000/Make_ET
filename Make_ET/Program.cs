@@ -29,14 +29,13 @@ namespace Make_ET
             await reader.Thread_QUOTE_OSAsync();
             await reader.Thread_QUOTE_FROOMAsync();
 
+            await reader.Thread_QUOTE_LOAsync();
+            await reader.Thread_QUOTE_SECURITYOLAsync();
+            await reader.Thread_QUOTE_LEAsync();
+
             await reader.Thread_QUOTE_PUT_ADAsync();
             await reader.Thread_QUOTE_PUT_EXECAsync();
             await reader.Thread_QUOTE_PUT_DCAsync();
-
-            await reader.Thread_QUOTE_LOAsync();
-
-            await reader.Thread_QUOTE_SECURITYOLAsync();
-            await reader.Thread_QUOTE_LEAsync();
 
             await reader.Thread_VNX_INAVAsync();
             await reader.Thread_VNX_IINDEXAsync();
@@ -53,10 +52,9 @@ namespace Make_ET
             reader.Redis_S5G_ET_QUOTE();
             reader.Redis_S5G_ET_PT();
             reader.Redis_S5G__ET_INDEX();
-            reader.SaveData();
-
-            saveData saveDataOracle = new saveData();
-            saveDataOracle.Save();
+            //reader.SaveData();
+            //saveData saveDataOracle = new saveData();
+            //saveDataOracle.Save();
         }           
     }
 }

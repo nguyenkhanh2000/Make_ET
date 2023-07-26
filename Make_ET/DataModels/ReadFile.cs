@@ -1,13 +1,17 @@
-﻿using Make_ET.Oracle;
+﻿using Make_ET.Log;
+using Make_ET.Mail;
+using Make_ET.Oracle;
 using Make_ET.Redis;
 using Newtonsoft.Json;
 using Oracle.ManagedDataAccess.Client;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -18,6 +22,7 @@ namespace Make_ET.DataModels
 {
     public class ReadFile
     {
+        Logger logger = new Logger("D:\\FPTS Job\\log.txt");
         CLog log = new CLog();
         private static string key_ET_QUOTE = "S5G__ET_QUOTE";
         private static string key_ET_PT = "S5G__ET_PT";
@@ -30,7 +35,7 @@ namespace Make_ET.DataModels
         CGlobal.FULL_ROW_PT m_arrstt_ROWPT;
         CGlobal.FULL_ROW_INDEX m_arrsttFullRowIndex;
         CGlobal.LastIndexHO m_LIH;
-        
+
         public CreaderAll<CGlobal.LS> arrsttLS;
         public CreaderAll<CGlobal.FROOM> arrsttFROOM;
         /*public CreaderF<CGlobal.SECURITY> m_crfSECURITY;*/        // groupQUOTE: da read => build full row => update redis chart (ZSet)
@@ -66,7 +71,7 @@ namespace Make_ET.DataModels
         public CreaderAll<CGlobal.VNX_MARKET_INDEX> m_crdVNXAllIndex;
 
         //public CreaderAll<CGlobal.VNX_MARKET_VNINDEX> m_crfVNX_MARKET_VNINDEX;
-               
+
         private const int VALUE_LENGTH_MAX = 10000;
         public string path;
 
@@ -148,7 +153,7 @@ namespace Make_ET.DataModels
             //SECURITYOL
             this.m_crfSECURITYOL.FileName = "SECURITYOL";
             this.m_crfSECURITYOL.FilePath = @"D:\FPTS Job\FPT_HOSTC_IS\BACKUP22\SECURITYOL.dat";
-            
+
             //LE
             this.m_crfLE.FileName = "LE";
             this.m_crfLE.FilePath = @"D:\FPTS Job\FPT_HOSTC_IS\BACKUP22\LE.dat";
@@ -201,13 +206,14 @@ namespace Make_ET.DataModels
         }
         public void Thread_FULL_ROW_QUOTE()
         {
-            try{
+            try
+            {
                 this.UpdateFULL_ROW_INDEX();
                 this.UpdateFullRowQuote(this.m_crfSECURITY.DataOld, this.m_crfLS.DataNew, this.m_crfOS.DataNew, this.m_crfFROOM.DataNew);
-                this.UpdateFULL_ROW_PT(this.m_crfPUT_AD.DataOld, this.m_crfSECURITY.DataOld,this.m_crfPUT_EXEC.DataOld,this.m_crfPUT_DC.DataOld);
-                
+                this.UpdateFULL_ROW_PT(this.m_crfPUT_AD.DataOld, this.m_crfSECURITY.DataOld, this.m_crfPUT_EXEC.DataOld, this.m_crfPUT_DC.DataOld);
+                this.Data();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }
@@ -239,7 +245,7 @@ namespace Make_ET.DataModels
             catch (Exception ex)
             {
                 // CLog.LogEx(CLog.GetLogExFileName(this.m_crfSECURITY.ThreadID, CConfig.LOGEX_ERROR_TYPE, CConfig.LOGEX_ERROR_EXT), CBase.GetDeepCaller() + " => " + ex.Message);
-                throw ex;
+                logger.LogError("An error occurred: " + ex.Message);
             }
             finally
             {
@@ -257,20 +263,21 @@ namespace Make_ET.DataModels
                 }
                 catch (Exception ex)
                 {
-                    throw ex;
+                    logger.LogError("An error occurred: " + ex.Message);
                 }
             });
         }
         public void Thread_QUOTE_LE()
         {
-            Task.Run(() => {
+            Task.Run(() =>
+            {
                 try
                 {
                     this.m_crfLE.ReadFileBig();
                 }
                 catch (Exception ex)
                 {
-                    throw ex;
+                    logger.LogError("An error occurred: " + ex.Message);
                 }
 
             });
@@ -318,15 +325,16 @@ namespace Make_ET.DataModels
             {
                 throw ex;
             }
-        }           
+        }
         public async Task Thread_QUOTE_SECURITYOLAsync()
         {
             try
             {
-                await Task.Run(() =>  this.m_crfSECURITYOL.ReadFileBig());
-            }catch(Exception ex) 
-            { 
-                throw ex; 
+                await Task.Run(() => this.m_crfSECURITYOL.ReadFileBig());
+            }
+            catch (Exception ex)
+            {
+                throw ex;
             }
         }
         public async Task Thread_QUOTE_LEAsync()
@@ -334,27 +342,30 @@ namespace Make_ET.DataModels
             try
             {
                 await Task.Run(() => this.m_crfLE.ReadFileBig());
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
-                throw ex;            
+                throw ex;
             }
         }
         public async Task Thread_QUOTE_OSAsync()
         {
             try
             {
-                await Task.Run(()=>this.m_crfOS.ReadFileBig()); 
-            }catch(Exception ex) 
-            { 
-                throw ex; 
+                await Task.Run(() => this.m_crfOS.ReadFileBig());
+            }
+            catch (Exception ex)
+            {
+                throw ex;
             }
         }
         public async Task Thread_QUOTE_FROOMAsync()
         {
             try
             {
-                await Task.Run(()=>this.m_crfFROOM.ReadFileBig());
-            }catch(Exception ex)
+                await Task.Run(() => this.m_crfFROOM.ReadFileBig());
+            }
+            catch (Exception ex)
             {
                 throw ex;
             }
@@ -412,7 +423,7 @@ namespace Make_ET.DataModels
             catch (Exception ex)
             {
                 log.CLogErrors(ex);
-                
+
             }
         }
         public async Task Thread_VNX_IINDEXAsync()
@@ -507,13 +518,13 @@ namespace Make_ET.DataModels
         {
             TOTAL_QUANTITY,
             TOTAL_VALUE
-        }        
+        }
         private long GetSum(int intStockNo, CGlobal.PUT_EXEC[] arrsttPUT_EXEC, PUT_EXEC_SUM PES)
         {
             try
             {
                 long intSum = 0;
-                for(int i = 0; i < arrsttPUT_EXEC.Length;i++)
+                for (int i = 0; i < arrsttPUT_EXEC.Length; i++)
                 {
                     if (PES == PUT_EXEC_SUM.TOTAL_QUANTITY)
                         intSum += Convert.ToInt64(arrsttPUT_EXEC[i].Vol);
@@ -521,7 +532,8 @@ namespace Make_ET.DataModels
                         intSum += Convert.ToInt64(arrsttPUT_EXEC[i].Vol) * Convert.ToInt64(arrsttPUT_EXEC[i].Price) * 10;
                 }
                 return intSum;
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 throw ex;
             }
@@ -554,11 +566,11 @@ namespace Make_ET.DataModels
                     v = v.Remove(0, 1); // error if length=0
                 return v;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }
-        }        
+        }
         public bool Update(CGlobal.SECURITY[] arrsttSECURITY)
         {
             if (arrsttSECURITY != null)
@@ -688,7 +700,7 @@ namespace Make_ET.DataModels
                         int indexLS = Array.LastIndexOf(stockNoLS, m_arrsttFullRowQuote[j].SN);
                         if (indexLS != -1)
                         {
-                            if(this.m_arrsttFullRowIndex.STAT_ControlCode == CGlobal.MARKET_STAT_CON) //phien lien tuc
+                            if (this.m_arrsttFullRowIndex.STAT_ControlCode == CGlobal.MARKET_STAT_CON) //phien lien tuc
                             {
                                 this.m_arrsttFullRowQuote[j].MPO = arrsttLS[indexLS].Price.ToString();              // 11 - match price [LS]
                                 this.m_arrsttFullRowQuote[j].MQO = arrsttLS[indexLS].MatchedVol.ToString();         // 12 - match quantity  [LS]
@@ -730,13 +742,15 @@ namespace Make_ET.DataModels
                             }
                         }
                     }
-                }              
+                }
             }
-            catch (Exception ex) 
-            { throw ex; }
+            catch (Exception ex)
+            { 
+                logger.LogError("An error occurred: " + ex.Message); 
+            }
 
             return true;
-        } 
+        }
         public bool UpdateFULL_ROW_PT(CGlobal.PUT_AD[] arrsttPUT_AD, CGlobal.SECURITY[] arrsttSECURITY, CGlobal.PUT_EXEC[] arrsttPUT_EXEC, CGlobal.PUT_DC[] arrsttPUT_DC)
         {
             try
@@ -749,8 +763,8 @@ namespace Make_ET.DataModels
                     int intAutoBuy = 0;
                     int intAutoSell = 0;
                     string Codes = "";
-                    for (int i = 0; i < arrsttPUT_AD.Length;i++)
-                    {                       
+                    for (int i = 0; i < arrsttPUT_AD.Length; i++)
+                    {
                         string side = new string(arrsttPUT_AD[i].Side).Trim();
                         if (side == "B")
                         {
@@ -762,7 +776,7 @@ namespace Make_ET.DataModels
                                     Codes = new string(arrsttSECURITY[j].StockSymbol).Trim();
                                     break;
                                 }
-                            }                           
+                            }
                             buyList.Add(new CGlobal.FULL_PUT_AD
                             {
                                 Auto = intAutoBuy.ToString(),
@@ -771,9 +785,9 @@ namespace Make_ET.DataModels
                                 Quantity = arrsttPUT_AD[i].Vol.ToString(),
                                 Time = arrsttPUT_AD[i].Time.ToString(),
                                 TradeID = arrsttPUT_AD[i].TradeID.ToString()
-                            });                          
+                            });
                         }
-                        else if(side == "S")
+                        else if (side == "S")
                         {
                             intAutoSell++;
                             for (int j = 0; j < arrsttSECURITY.Length; j++)
@@ -795,7 +809,7 @@ namespace Make_ET.DataModels
                             });
                         }
                         m_arrstt_PUT_AD_BUY = buyList.ToArray();
-                        m_arrstt_PUT_AD_SELL = sellList.ToArray();                       
+                        m_arrstt_PUT_AD_SELL = sellList.ToArray();
                     }
                 }
                 int[] stockNoSECURITY;
@@ -806,13 +820,13 @@ namespace Make_ET.DataModels
                 }
                 //UPDATE PUT_EXEC                              
                 if (arrsttPUT_EXEC != null)
-                {                   
-                    if(m_arrstt_PUT_EXEC == null && arrsttPUT_EXEC != null)
+                {
+                    if (m_arrstt_PUT_EXEC == null && arrsttPUT_EXEC != null)
                     {
-                        Array.Resize(ref m_arrstt_PUT_EXEC,arrsttPUT_EXEC.Length);
+                        Array.Resize(ref m_arrstt_PUT_EXEC, arrsttPUT_EXEC.Length);
                     }
                     if (m_arrstt_PUT_EXEC == null) return false;
-                    for(int i = 0; i < arrsttPUT_EXEC.Length; i++) 
+                    for (int i = 0; i < arrsttPUT_EXEC.Length; i++)
                     {
                         int indexPUT_EXEC = Array.LastIndexOf(stockNoSECURITY, arrsttPUT_EXEC[i].StockNo);
                         m_arrstt_PUT_EXEC[i].Auto = (i + 1).ToString();
@@ -822,8 +836,8 @@ namespace Make_ET.DataModels
                         m_arrstt_PUT_EXEC[i].Fl = m_arrsttFullRowQuote[indexPUT_EXEC].Fl.ToString();
                         m_arrstt_PUT_EXEC[i].PTPrice = arrsttPUT_EXEC[i].Price.ToString();
                         m_arrstt_PUT_EXEC[i].PTQuantity = arrsttPUT_EXEC[i].Vol.ToString();
-                        m_arrstt_PUT_EXEC[i].PTTotalQuantity = this.GetSum(arrsttPUT_EXEC[i].StockNo,arrsttPUT_EXEC,PUT_EXEC_SUM.TOTAL_QUANTITY).ToString();
-                        m_arrstt_PUT_EXEC[i].PTTotalValue = this.GetSum(arrsttPUT_EXEC[i].StockNo,arrsttPUT_EXEC,PUT_EXEC_SUM.TOTAL_VALUE).ToString();
+                        m_arrstt_PUT_EXEC[i].PTTotalQuantity = this.GetSum(arrsttPUT_EXEC[i].StockNo, arrsttPUT_EXEC, PUT_EXEC_SUM.TOTAL_QUANTITY).ToString();
+                        m_arrstt_PUT_EXEC[i].PTTotalValue = this.GetSum(arrsttPUT_EXEC[i].StockNo, arrsttPUT_EXEC, PUT_EXEC_SUM.TOTAL_VALUE).ToString();
                         m_arrstt_PUT_EXEC[i].NMTotalQuantity = this.m_arrsttFullRowQuote[indexPUT_EXEC].TQ;
                         m_arrstt_PUT_EXEC[i].NMPTTotalQuantity = (Convert.ToInt64(m_arrstt_PUT_EXEC[i].PTTotalQuantity) + Convert.ToInt64(m_arrstt_PUT_EXEC[i].NMTotalQuantity)).ToString();
                         m_arrstt_PUT_EXEC[i].ListingQuantity = "0";
@@ -832,7 +846,7 @@ namespace Make_ET.DataModels
                     }
                 }
                 //UPDATE PUT_DC
-                if(arrsttPUT_DC != null)
+                if (arrsttPUT_DC != null)
                 {
                     if (m_arrstt_PUT_DC == null && arrsttPUT_DC != null)
                     {
@@ -853,7 +867,7 @@ namespace Make_ET.DataModels
                             m_arrstt_PUT_DC[i].Fl = "0";
                             m_arrstt_PUT_DC[i].PTPrice = arrsttPUT_DC[i].Price.ToString();
                             m_arrstt_PUT_DC[i].PTQuantity = arrsttPUT_DC[i].Vol.ToString();
-                            m_arrstt_PUT_DC[i].PTTotalQuantity = "0"; 
+                            m_arrstt_PUT_DC[i].PTTotalQuantity = "0";
                             m_arrstt_PUT_DC[i].PTTotalValue = "0";
                             m_arrstt_PUT_DC[i].NMTotalQuantity = "0";
                             m_arrstt_PUT_DC[i].NMPTTotalQuantity = "0";
@@ -861,17 +875,17 @@ namespace Make_ET.DataModels
                             m_arrstt_PUT_DC[i].Time = "";
                             m_arrstt_PUT_DC[i].ConfirmNo = arrsttPUT_DC[i].ConfirmNo.ToString();
                             /*Array.Resize(ref m_arrstt_PUT_DC, arrsttPUT_DC.Length - 1);*/
-                        }                        
-                    }                  
+                        }
+                    }
                 }
                 m_arrstt_ROWPT.PUT_AD_BUY = m_arrstt_PUT_AD_BUY;
                 m_arrstt_ROWPT.PUT_AD_SELL = m_arrstt_PUT_AD_SELL;
                 m_arrstt_ROWPT.PUT_EXEC = m_arrstt_PUT_EXEC;
                 m_arrstt_ROWPT.PUT_DC = m_arrstt_PUT_DC;
             }
-            catch(Exception ex) 
-            { 
-                throw ex; 
+            catch (Exception ex)
+            {
+                logger.LogError("An error occurred: " + ex.Message);
             }
             return true;
         }
@@ -883,7 +897,7 @@ namespace Make_ET.DataModels
                 MARKET_STAT mARKET_STAT = this.m_crfMARKET_STAT.DataUpdate[this.m_crfMARKET_STAT.DataUpdate.Length - 1];
                 this.m_arrsttFullRowIndex.STAT_ControlCode = /*mARKET_STAT.ControlCode.ToString();*/new string(mARKET_STAT.ControlCode).Trim();
                 this.m_arrsttFullRowIndex.STAT_Time = mARKET_STAT.Time.ToString();
-                //this.m_arrsttFullRowIndex.STAT_Date = 
+                //this.m_arrsttFullRowIndex.STAT_Date = DateTime.Now.ToString();
                 VNX_MARKET_VNINDEX VNINDEX = this.m_crdVNIndex.DataUpdate[this.m_crdVNIndex.DataUpdate.Length - 1];
                 this.m_arrsttFullRowIndex.VNI_Time = VNINDEX.Time.ToString();
                 this.m_arrsttFullRowIndex.VNI_IndexValue = (VNINDEX.Index / 100.0).ToString();
@@ -985,7 +999,7 @@ namespace Make_ET.DataModels
                 CGlobal.INAV INAV = this.m_crdINAV.DataUpdate[this.m_crdINAV.DataUpdate.Length - 1];
                 this.m_arrsttFullRowIndex.INAV_iNAV = INAV.iNAV.ToString();
                 this.m_arrsttFullRowIndex.INAV_StockNo = INAV.StockNo.ToString();
-                this.m_arrsttFullRowIndex.INAV_StockSymbol = new string(INAV.StockSymbol).Trim();/*this.m_crdINAV.Char2String(INAV.StockSymbol);*/               
+                this.m_arrsttFullRowIndex.INAV_StockSymbol = new string(INAV.StockSymbol).Trim();/*this.m_crdINAV.Char2String(INAV.StockSymbol);*/
                 this.m_arrsttFullRowIndex.INAV_Time = INAV.Time.ToString();
 
                 CGlobal.IINDEX IINDEX = this.m_crdIINDEX.DataUpdate[this.m_crdIINDEX.DataUpdate.Length - 1];
@@ -995,7 +1009,7 @@ namespace Make_ET.DataModels
                 this.m_arrsttFullRowIndex.IINDEX_iIndexSymbol = IINDEX.Time.ToString();
                 this.m_arrsttFullRowIndex.IINDEX_Time = IINDEX.Time.ToString();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }
@@ -1016,35 +1030,72 @@ namespace Make_ET.DataModels
         }
         public void Redis_S5G_ET_QUOTE()
         {
+            string Redis_message = "<p>S5G_ET_QUOTE saved successfully</p>";
             Connection.ConnectionRedis();
             IDatabase db = Connection.GetRedisDatabase();
-
-            double dblScore = Convert.ToDouble(DateTime.Now.ToString("yyyyMMddHHmmssfff"));
-            string jsonData = JsonConvert.SerializeObject(this.m_arrsttFullRowQuote);           
-            db.SortedSetAdd(key_ET_QUOTE, jsonData, dblScore);
-            Connection.RedisClose();
+            try
+            {
+                double dblScore = Convert.ToDouble(DateTime.Now.ToString("yyyyMMddHHmmssfff"));
+                string jsonData = JsonConvert.SerializeObject(this.m_arrsttFullRowQuote);
+                db.SortedSetAdd(key_ET_QUOTE, jsonData, dblScore);
+                Connection.RedisClose();
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                Send_Mail sent_mail = new Send_Mail();
+                sent_mail.Send_Message(Redis_message);
+            }           
         }
         public void Redis_S5G_ET_PT()
-        {
+        {           
+            logger.LogInfo("Update Redis");
+            string Redis_message = "<p>S5G_ET_PT saved successfully</p>";
             Connection.ConnectionRedis();
             IDatabase db = Connection.GetRedisDatabase();
-
-            double dblScore = Convert.ToDouble(DateTime.Now.ToString("yyyyMMddHHmmssfff"));
-            string jsonData = JsonConvert.SerializeObject(this.m_arrstt_ROWPT);
-            db.SortedSetAdd(key_ET_PT, jsonData, dblScore);
-            Connection.RedisClose();
+            try
+            {
+                double dblScore = Convert.ToDouble(DateTime.Now.ToString("yyyyMMddHHmmssfff"));
+                string jsonData = JsonConvert.SerializeObject(this.m_arrstt_ROWPT);
+                db.SortedSetAdd(key_ET_PT, jsonData, dblScore);
+                Connection.RedisClose();
+            }
+            catch(Exception ex)
+            {                
+                logger.LogError("An error occurred: " + ex.Message);
+            }
+            finally
+            {
+                Send_Mail sent_mail = new Send_Mail();
+                sent_mail.Send_Message(Redis_message);
+            }
         }
         public void Redis_S5G__ET_INDEX()
         {
+            string Redis_message = "<p>S5G__ET_INDEX saved successfully</p>";
             Connection.ConnectionRedis();
             IDatabase db = Connection.GetRedisDatabase();
-            double dblScore = Convert.ToDouble(DateTime.Now.ToString("yyyyMMddHHmmssfff"));
-            string jsonData = JsonConvert.SerializeObject(this.m_arrsttFullRowIndex);
-            db.SortedSetAdd(key_ET_Index, jsonData, dblScore);
-            Connection.RedisClose();
+            try
+            {
+                double dblScore = Convert.ToDouble(DateTime.Now.ToString("yyyyMMddHHmmssfff"));
+                string jsonData = JsonConvert.SerializeObject(this.m_arrsttFullRowIndex);
+                db.SortedSetAdd(key_ET_Index, jsonData, dblScore);
+                Connection.RedisClose();
+            }
+            catch(Exception ex) { 
+                logger.LogError("An error occurred: " + ex.Message); 
+            }
+            finally
+            {
+                Send_Mail sent_mail = new Send_Mail();
+                sent_mail.Send_Message(Redis_message);
+            }
         }
         public void Read_LAST_INDEX_HO()
-        {          
+        {
             Connection.ConnectionRedis();
             IDatabase db = Connection.GetRedisDatabase();
 
@@ -1054,9 +1105,9 @@ namespace Make_ET.DataModels
             if (!string.IsNullOrEmpty(convertedJsonString))
             {
                 m_LIH = JsonConvert.DeserializeObject<LastIndexHO>(convertedJsonString);
-                if(m_LIH != null && m_LIH.Data != null)
+                if (m_LIH != null && m_LIH.Data != null)
                 {
-                    foreach(LastIndexHODetail detail in m_LIH.Data)
+                    foreach (LastIndexHODetail detail in m_LIH.Data)
                     {
                         string tradingDate = detail.TradingDate;
                         double vnIndex = detail.VNIndex;
@@ -1067,22 +1118,27 @@ namespace Make_ET.DataModels
                         double vn100 = detail.VN100;
                         double vnxall = detail.VNXALL;
                     }
-                }               
-            }           
+                }
+            }
         }
         public void SaveData()
         {
             ConnectionOracle.ConnectOracle();
             OracleConnection conn = ConnectionOracle._oracleconnection;
+            //string sqlQuery = "SELECT COUNT(*) FROM STOCK_HCM";
+            int i = 1;
             conn.Open();
             try
-            {
-                int i = 1;
+            {               
+                using (OracleCommand truncateCmd = new OracleCommand("TRUNCATE TABLE STOCK_HCM", conn))
+                {
+                    truncateCmd.ExecuteNonQuery();
+                }
                 foreach (CGlobal.SECURITY security in m_crfSECURITY.DataUpdate)
                 {
-                    using (OracleCommand cmd = new OracleCommand("INSERT INTO STOCK_HCM (TRANID, STOCKNO, STOCKSYMBOL, STOCKTYPE, PRIORCLOSEPRICE, OPENPRICE, LAST, LASTVOL, HIGHEST, LOWEST) " +
-                                                                "VALUES (:TRANID, :STOCKNO, :STOCKSYMBOL, :STOCKTYPE, :PRIORCLOSEPRICE, :OPENPRICE, :LAST, :LASTVOL, :HIGHEST, :LOWEST)", conn))
+                    using (OracleCommand cmd = new OracleCommand("INSERT_STOCK_HCM", conn))
                     {
+                        cmd.CommandType = System.Data.CommandType.StoredProcedure;
                         cmd.Parameters.Add(":TRANID", OracleDbType.Decimal).Value = i;
                         cmd.Parameters.Add(":STOCKNO", OracleDbType.Decimal).Value = security.StockNo;
                         cmd.Parameters.Add(":STOCKSYMBOL", OracleDbType.NVarchar2, 16).Value = security.StockSymbol;
@@ -1095,26 +1151,39 @@ namespace Make_ET.DataModels
                         cmd.Parameters.Add(":LOWEST", OracleDbType.Double).Value = security.Lowest;
                         cmd.ExecuteNonQuery();
                     }
-                    
-                    using (OracleCommand cmd = new OracleCommand("INSERT INTO TBL_IG3_SI(ID , SYMBOL, BOARDCODE, SECURITYTYPE, BASICPRICE, MATHCHPRICE, OPENPRICE, CLOSERPRICE, MIDPX, HIGHESTPRICE, LOWESTPRICE, NM_TOTAL_TRADEQTTY)" +
-                                                                "VALUES(:ID , :SYMBOL, :BOARDCODE, :SECURITYTYPE, :BASICPRICE, :MATHCHPRICE, :OPENPRICE, :CLOSERPRICE, :MIDPX, :HIGHESTPRICE, :LOWESTPRICE, :NM_TOTAL_TRADEQTTY)", conn))
-                    {
-                        cmd.Parameters.Add(":ID", OracleDbType.Decimal).Value = i;
-                        cmd.Parameters.Add(":SYMBOL", OracleDbType.NVarchar2).Value = security.StockSymbol;
-                        cmd.Parameters.Add(":BOARDCODE", OracleDbType.NVarchar2).Value = security.BoardLost;
-                    }
                     i++;
                 }
+                    //int rowCount = Convert.ToInt32(command.ExecuteScalar());
+                    //if (rowCount > 0)                   
+                    //else                   
                 
+                //foreach(CGlobal.SECURITY security in m_crfSECURITY.DataUpdate)
+                //{
+                //    using (OracleCommand cmds = new OracleCommand("INSERT INTO TBL_IG3_SI(ID , SYMBOL, BOARDCODE, SECURITYTYPE, BASICPRICE, MATHCHPRICE, OPENPRICE, CLOSERPRICE, MIDPX, HIGHESTPRICE, LOWESTPRICE, NM_TOTAL_TRADEQTTY)" +
+                //                                                "VALUES(:ID , :SYMBOL, :BOARDCODE, :SECURITYTYPE, :BASICPRICE, :MATHCHPRICE, :OPENPRICE, :CLOSERPRICE, :MIDPX, :HIGHESTPRICE, :LOWESTPRICE, :NM_TOTAL_TRADEQTTY)", conn))
+                //    {
+                //        cmds.Parameters.Add(":ID", OracleDbType.Decimal).Value = i;
+                //        cmds.Parameters.Add(":SYMBOL", OracleDbType.NVarchar2).Value = security.StockSymbol;
+                //        cmds.Parameters.Add(":BOARDCODE", OracleDbType.NVarchar2).Value = security.BoardLost;
+                //        cmds.ExecuteNonQuery();
+                //    }
+                //    i++;
+                //}               
             }
             catch (Exception ex)
             {
-                throw ex;
+                logger.LogError("An error occurred: " + ex.Message);
             }
             finally
             {
                 conn.Close();
             }
+        }
+        public bool Data()
+        {
+            saveData data = new saveData();
+            data.Save(m_crfSECURITY);
+            return true;
         }
     }
 }
