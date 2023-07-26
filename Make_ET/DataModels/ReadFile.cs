@@ -1,4 +1,6 @@
-﻿using Make_ET.Oracle;
+﻿using Make_ET.Log;
+using Make_ET.Mail;
+using Make_ET.Oracle;
 using Make_ET.Redis;
 using Newtonsoft.Json;
 using Oracle.ManagedDataAccess.Client;
@@ -20,6 +22,7 @@ namespace Make_ET.DataModels
 {
     public class ReadFile
     {
+        Logger logger = new Logger("D:\\FPTS Job\\log.txt");
         CLog log = new CLog();
         private static string key_ET_QUOTE = "S5G__ET_QUOTE";
         private static string key_ET_PT = "S5G__ET_PT";
@@ -242,7 +245,7 @@ namespace Make_ET.DataModels
             catch (Exception ex)
             {
                 // CLog.LogEx(CLog.GetLogExFileName(this.m_crfSECURITY.ThreadID, CConfig.LOGEX_ERROR_TYPE, CConfig.LOGEX_ERROR_EXT), CBase.GetDeepCaller() + " => " + ex.Message);
-                throw ex;
+                logger.LogError("An error occurred: " + ex.Message);
             }
             finally
             {
@@ -260,7 +263,7 @@ namespace Make_ET.DataModels
                 }
                 catch (Exception ex)
                 {
-                    throw ex;
+                    logger.LogError("An error occurred: " + ex.Message);
                 }
             });
         }
@@ -274,7 +277,7 @@ namespace Make_ET.DataModels
                 }
                 catch (Exception ex)
                 {
-                    throw ex;
+                    logger.LogError("An error occurred: " + ex.Message);
                 }
 
             });
@@ -742,7 +745,9 @@ namespace Make_ET.DataModels
                 }
             }
             catch (Exception ex)
-            { throw ex; }
+            { 
+                logger.LogError("An error occurred: " + ex.Message); 
+            }
 
             return true;
         }
@@ -880,7 +885,7 @@ namespace Make_ET.DataModels
             }
             catch (Exception ex)
             {
-                throw ex;
+                logger.LogError("An error occurred: " + ex.Message);
             }
             return true;
         }
@@ -1025,32 +1030,69 @@ namespace Make_ET.DataModels
         }
         public void Redis_S5G_ET_QUOTE()
         {
+            string Redis_message = "<p>S5G_ET_QUOTE saved successfully</p>";
             Connection.ConnectionRedis();
             IDatabase db = Connection.GetRedisDatabase();
-
-            double dblScore = Convert.ToDouble(DateTime.Now.ToString("yyyyMMddHHmmssfff"));
-            string jsonData = JsonConvert.SerializeObject(this.m_arrsttFullRowQuote);
-            db.SortedSetAdd(key_ET_QUOTE, jsonData, dblScore);
-            Connection.RedisClose();
+            try
+            {
+                double dblScore = Convert.ToDouble(DateTime.Now.ToString("yyyyMMddHHmmssfff"));
+                string jsonData = JsonConvert.SerializeObject(this.m_arrsttFullRowQuote);
+                db.SortedSetAdd(key_ET_QUOTE, jsonData, dblScore);
+                Connection.RedisClose();
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                Send_Mail sent_mail = new Send_Mail();
+                sent_mail.Send_Message(Redis_message);
+            }           
         }
         public void Redis_S5G_ET_PT()
-        {
+        {           
+            logger.LogInfo("Update Redis");
+            string Redis_message = "<p>S5G_ET_PT saved successfully</p>";
             Connection.ConnectionRedis();
             IDatabase db = Connection.GetRedisDatabase();
-
-            double dblScore = Convert.ToDouble(DateTime.Now.ToString("yyyyMMddHHmmssfff"));
-            string jsonData = JsonConvert.SerializeObject(this.m_arrstt_ROWPT);
-            db.SortedSetAdd(key_ET_PT, jsonData, dblScore);
-            Connection.RedisClose();
+            try
+            {
+                double dblScore = Convert.ToDouble(DateTime.Now.ToString("yyyyMMddHHmmssfff"));
+                string jsonData = JsonConvert.SerializeObject(this.m_arrstt_ROWPT);
+                db.SortedSetAdd(key_ET_PT, jsonData, dblScore);
+                Connection.RedisClose();
+            }
+            catch(Exception ex)
+            {                
+                logger.LogError("An error occurred: " + ex.Message);
+            }
+            finally
+            {
+                Send_Mail sent_mail = new Send_Mail();
+                sent_mail.Send_Message(Redis_message);
+            }
         }
         public void Redis_S5G__ET_INDEX()
         {
+            string Redis_message = "<p>S5G__ET_INDEX saved successfully</p>";
             Connection.ConnectionRedis();
             IDatabase db = Connection.GetRedisDatabase();
-            double dblScore = Convert.ToDouble(DateTime.Now.ToString("yyyyMMddHHmmssfff"));
-            string jsonData = JsonConvert.SerializeObject(this.m_arrsttFullRowIndex);
-            db.SortedSetAdd(key_ET_Index, jsonData, dblScore);
-            Connection.RedisClose();
+            try
+            {
+                double dblScore = Convert.ToDouble(DateTime.Now.ToString("yyyyMMddHHmmssfff"));
+                string jsonData = JsonConvert.SerializeObject(this.m_arrsttFullRowIndex);
+                db.SortedSetAdd(key_ET_Index, jsonData, dblScore);
+                Connection.RedisClose();
+            }
+            catch(Exception ex) { 
+                logger.LogError("An error occurred: " + ex.Message); 
+            }
+            finally
+            {
+                Send_Mail sent_mail = new Send_Mail();
+                sent_mail.Send_Message(Redis_message);
+            }
         }
         public void Read_LAST_INDEX_HO()
         {
@@ -1115,7 +1157,6 @@ namespace Make_ET.DataModels
                     //if (rowCount > 0)                   
                     //else                   
                 
-
                 //foreach(CGlobal.SECURITY security in m_crfSECURITY.DataUpdate)
                 //{
                 //    using (OracleCommand cmds = new OracleCommand("INSERT INTO TBL_IG3_SI(ID , SYMBOL, BOARDCODE, SECURITYTYPE, BASICPRICE, MATHCHPRICE, OPENPRICE, CLOSERPRICE, MIDPX, HIGHESTPRICE, LOWESTPRICE, NM_TOTAL_TRADEQTTY)" +
@@ -1131,7 +1172,7 @@ namespace Make_ET.DataModels
             }
             catch (Exception ex)
             {
-                throw ex;
+                logger.LogError("An error occurred: " + ex.Message);
             }
             finally
             {
@@ -1144,58 +1185,5 @@ namespace Make_ET.DataModels
             data.Save(m_crfSECURITY);
             return true;
         }
-
-        //public void SaveData()
-        //{
-        //    ConnectionOracle.ConnectOracle();
-        //    OracleConnection conn = ConnectionOracle._oracleconnection;
-        //    conn.Open();
-        //    int i = 1;
-        //    try
-        //    {
-        //        OracleParameter param = new OracleParameter();
-        //        param.ParameterName = "p_stock_data_table";
-        //        param.OracleDbType = OracleDbType.Array;
-        //        param.Direction = ParameterDirection.Input;
-        //        param.UdtTypeName = "STOCK_DATA_TABLE"; // Use the table type name defined in the database
-
-        //        // Create an array of OracleObjects for the STOCK_DATA_TABLE
-        //        OracleObject[] stockDataArray = new OracleObject[m_crfSECURITY.DataUpdate.Count];
-
-        //        for (int index = 0; index < m_crfSECURITY.DataUpdate.Count; index++)
-        //        {
-        //            OracleObject stockData = conn.CreateObject("STOCK_DATA");
-        //            stockData["P_TRANID"] = i;
-        //            stockData["P_STOCKNO"] = m_crfSECURITY.DataUpdate[index].StockNo;
-        //            stockData["P_STOCKSYMBOL"] = m_crfSECURITY.DataUpdate[index].StockSymbol;
-        //            stockData["P_STOCKTYPE"] = m_crfSECURITY.DataUpdate[index].StockType;
-        //            stockData["P_PRIORCLOSEPRICE"] = m_crfSECURITY.DataUpdate[index].PriorClosePrice;
-        //            stockData["P_OPENPRICE"] = m_crfSECURITY.DataUpdate[index].OpenPrice;
-        //            stockData["P_LAST"] = m_crfSECURITY.DataUpdate[index].Last;
-        //            stockData["P_LASTVOL"] = m_crfSECURITY.DataUpdate[index].LastVol;
-        //            stockData["P_HIGHEST"] = m_crfSECURITY.DataUpdate[index].Highest;
-        //            stockData["P_LOWEST"] = m_crfSECURITY.DataUpdate[index].Lowest;
-
-        //            stockDataArray[index] = stockData;
-        //            i++;
-        //        }
-
-        //        // Set the value of the parameter to the array of OracleObjects
-        //        param.Value = stockDataArray;
-
-        //        using (OracleCommand cmd = new OracleCommand("SP_STOCK_HCM", conn))
-        //        {
-        //            cmd.CommandType = CommandType.StoredProcedure;
-        //            cmd.Parameters.Add(param);
-
-        //            cmd.ExecuteNonQuery();
-        //        }
-        //    }
-        //    catch (Exception e) { throw e; }
-        //    finally
-        //    {
-        //        conn.Close();
-        //    }
-        //}
     }
 }

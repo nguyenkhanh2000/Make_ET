@@ -10,7 +10,7 @@ namespace Make_ET
     public static class App_Start
     {
         private static DateTime currentTime = DateTime.Now;
-        private static DateTime targetTime = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, 15, 0, 0);
+        private static DateTime targetTime = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, 10, 12, 0);
         private static TimeSpan timeDifference = targetTime - currentTime;
         public static void Start_App()
         {
