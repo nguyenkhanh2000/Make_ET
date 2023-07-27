@@ -141,7 +141,7 @@
     <Compile Include="Log\Logger.cs" />
     <Compile Include="Mail\Send_Mail.cs" />
     <Compile Include="Oracle\ConnectionOracle.cs" />
-    <Compile Include="Oracle\saveData.cs" />
+    <Compile Include="Oracle\STOCK_HCM.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Redis\Connection.cs" />

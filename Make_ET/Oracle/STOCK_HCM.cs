@@ -13,7 +13,7 @@ using static Make_ET.DataModels.CGlobal;
 
 namespace Make_ET.Oracle
 {
-    public class saveData
+    public class STOCK_HCM
     {      
         public void Save(CreaderAll<SECURITY> m_SECURITY)
         {

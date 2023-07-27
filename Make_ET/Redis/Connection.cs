@@ -33,18 +33,5 @@ namespace Make_ET.Redis
             _redisConnection.Close();
         }
 
-        //private static ConnectionMultiplexer _redisConnection;
-        //public static ConnectionMultiplexer RedisConnection
-        //{
-        //    get
-        //    {
-        //        if(_redisConnection == null || !_redisConnection.IsConnected)
-        //        {
-        //            _redisConnection = ConnectionMultiplexer.Connect("localhost");
-        //        }
-        //        return _redisConnection;
-        //    }
-        //}
-
     }
 }
