@@ -21,10 +21,7 @@ using static Make_ET.DataModels.CGlobal;
 namespace Make_ET.DataModels
 {
     public class ReadFile
-    {
-        //Ghi Log
-        Logger logger = new Logger(CConfig.LOG_FILE_PATH);
-               
+    {          
         CGlobal.FULL_ROW_QUOTE[] m_arrsttFullRowQuote;
         CGlobal.FULL_PUT_AD[] m_arrstt_PUT_AD_BUY;
         CGlobal.FULL_PUT_AD[] m_arrstt_PUT_AD_SELL;
@@ -87,7 +84,7 @@ namespace Make_ET.DataModels
         }
         private void IniConfig()
         {
-            logger.LogInfo("IniConfig");
+            Logger.LogInfo("IniConfig");
             this.m_crfSECURITY = new CreaderAll<CGlobal.SECURITY>("");
             this.m_crfSECURITYOL = new CreaderAll<CGlobal.SECURITYOL>("");
             //this.m_crfMARKET_STAT = new CreaderF<CGlobal.MARKET_STAT>("");
@@ -205,7 +202,7 @@ namespace Make_ET.DataModels
         }
         public void Update_FULL()
         {
-            logger.LogInfo("Update_FULL_Redis");
+            Logger.LogInfo("Update_FULL_Redis");
             try
             {
                 this.Read_LAST_INDEX_HO();
@@ -213,69 +210,55 @@ namespace Make_ET.DataModels
                 this.UpdateFullRowQuote(this.m_crfSECURITY.DataOld, this.m_crfLS.DataNew, this.m_crfOS.DataNew, this.m_crfFROOM.DataNew);
                 this.UpdateFULL_ROW_PT(this.m_crfPUT_AD.DataOld, this.m_crfSECURITY.DataOld, this.m_crfPUT_EXEC.DataOld, this.m_crfPUT_DC.DataOld);
                 this.Oracle_STOCK_HCM();
-                this.Redis_S5G_ET_PT();
+                //this.Redis_S5G_ET_PT();
+                this.S5G_ET_QUOTE();
                 this.Redis_S5G_ET_QUOTE();
                 this.Redis_S5G__ET_INDEX();
             }
             catch (Exception ex)
             {
-                logger.LogError(ex.Message);
+                Logger.LogError(ex.Message);
             }
             finally
             {
 
             }
         }        
-        public void Thread_QUOTE_SECURITY()
-        {
-            try
-            {
+        //public void Thread_QUOTE_SECURITY()
+        //{
+        //    try
+        //    {
 
-                // read file
-                //this.m_crfSECURITY.ReadFile();
-                // update full row
-                //this.Update(this.m_crfSECURITY.DataNew);
-                //this.m_crfMARKET_STAT.ReadFile();
+        //        // read file
+        //        //this.m_crfSECURITY.ReadFile();
+        //        // update full row
+        //        //this.Update(this.m_crfSECURITY.DataNew);
+        //        //this.m_crfMARKET_STAT.ReadFile();
 
-                this.UpdateFullRowQuote(this.m_crfSECURITY.DataNew, this.m_crfLS.DataNew, this.m_crfOS.DataNew, this.m_crfFROOM.DataNew);
-                //this.m_crfSECURITYOL.ReadFileBig();
+        //        this.UpdateFullRowQuote(this.m_crfSECURITY.DataNew, this.m_crfLS.DataNew, this.m_crfOS.DataNew, this.m_crfFROOM.DataNew);
+        //        //this.m_crfSECURITYOL.ReadFileBig();
 
-                //this.m_crfLE.ReadFileBig();
-                //this.m_crfLS.ReadFileBig();
-                //this.m_crfLO.ReadFileBig();
-                //this.m_crfOS.ReadFileBig();
-                //this.m_crfFROOM.ReadFileBig();
-                //this.m_crfPUT_EXEC.ReadFileBig();
-            }
-            catch (Exception ex)
-            {
-                // CLog.LogEx(CLog.GetLogExFileName(this.m_crfSECURITY.ThreadID, CConfig.LOGEX_ERROR_TYPE, CConfig.LOGEX_ERROR_EXT), CBase.GetDeepCaller() + " => " + ex.Message);
-                logger.LogError("An error occurred: " + ex.Message);
-            }
-            finally
-            {
+        //        //this.m_crfLE.ReadFileBig();
+        //        //this.m_crfLS.ReadFileBig();
+        //        //this.m_crfLO.ReadFileBig();
+        //        //this.m_crfOS.ReadFileBig();
+        //        //this.m_crfFROOM.ReadFileBig();
+        //        //this.m_crfPUT_EXEC.ReadFileBig();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // CLog.LogEx(CLog.GetLogExFileName(this.m_crfSECURITY.ThreadID, CConfig.LOGEX_ERROR_TYPE, CConfig.LOGEX_ERROR_EXT), CBase.GetDeepCaller() + " => " + ex.Message);
+        //        Logger.LogError("An error occurred: " + ex.Message);
+        //    }
+        //    finally
+        //    {
 
-            }
+        //    }
 
-        }
-        public void Thread_QUOTE_SECURITYOL()
-        {
-            logger.LogInfo("Thread_QUOTE_SECURITYOL");
-            Task.Run(() =>
-            {
-                try
-                {
-                    this.m_crfSECURITYOL.ReadFileBig();
-                }
-                catch (Exception ex)
-                {
-                    logger.LogError("An error occurred: " + ex.Message);
-                }
-            });
-        }
+        //}
         public void Thread_QUOTE_LE()
         {
-            logger.LogInfo("Thread_QUOTE_LE");
+            Logger.LogInfo("Thread_QUOTE_LE");
             Task.Run(() =>
             {
                 try
@@ -284,14 +267,14 @@ namespace Make_ET.DataModels
                 }
                 catch (Exception ex)
                 {
-                    logger.LogError("An error occurred: " + ex.Message);
+                    Logger.LogError("An error occurred: " + ex.Message);
                 }
 
             });
         }
         public async Task Thread_QUOTE_LSAsync()
         {
-            logger.LogInfo("Thread_QUOTE_LSAsync");
+            Logger.LogInfo("Thread_QUOTE_LSAsync");
             try
             {
                 await Task.Run(() => this.m_crfLS.ReadFileBig());
@@ -303,122 +286,122 @@ namespace Make_ET.DataModels
         }
         public async Task Thread_QUOTE_LOAsync()
         {
-            logger.LogInfo("Thread_QUOTE_LOAsync");
+            Logger.LogInfo("Thread_QUOTE_LOAsync");
             try
             {
                 await Task.Run(() => this.m_crfLO.ReadFileBig());
             }
             catch (Exception ex)
             {
-                logger.LogError("An error occurred: " + ex.Message);
+                Logger.LogError("An error occurred: " + ex.Message);
             }
         }
         public async Task Thread_QUOTE_SECURITYAsync()
         {
-            logger.LogInfo("Thread_QUOTE_SECURITYAsync");
+            Logger.LogInfo("Thread_QUOTE_SECURITYAsync");
             try
             {
                 await Task.Run(() => this.m_crfSECURITY.ReadFileBig());
             }
             catch (Exception ex)
             {
-                logger.LogError("An error occurred: " + ex.Message);
+                Logger.LogError("An error occurred: " + ex.Message);
             }
         }
         public async Task Thread_QUOTE_MARKET_STATAsync()
         {
-            logger.LogInfo("Thread_QUOTE_MARKET_STATAsync");
+            Logger.LogInfo("Thread_QUOTE_MARKET_STATAsync");
             try
             {
                 await Task.Run(() => this.m_crfMARKET_STAT.ReadFileBig());
             }
             catch (Exception ex)
             {
-                logger.LogError("An error occurred: " + ex.Message);
+                Logger.LogError("An error occurred: " + ex.Message);
             }
         }
         public async Task Thread_QUOTE_SECURITYOLAsync()
         {
-            logger.LogInfo("Thread_QUOTE_SECURITYOLAsync");
+            Logger.LogInfo("Thread_QUOTE_SECURITYOLAsync");
             try
             {
                 await Task.Run(() => this.m_crfSECURITYOL.ReadFileBig());
             }
             catch (Exception ex)
             {
-                logger.LogError("An error occurred: " + ex.Message);
+                Logger.LogError("An error occurred: " + ex.Message);
             }
         }
         public async Task Thread_QUOTE_LEAsync()
         {
-            logger.LogInfo("Thread_QUOTE_LEAsync");
+            Logger.LogInfo("Thread_QUOTE_LEAsync");
             try
             {
                 await Task.Run(() => this.m_crfLE.ReadFileBig());
             }
             catch (Exception ex)
             {
-                logger.LogError("An error occurred: " + ex.Message);
+                Logger.LogError("An error occurred: " + ex.Message);
             }
         }
         public async Task Thread_QUOTE_OSAsync()
         {
-            logger.LogInfo("Thread_QUOTE_OSAsync");
+            Logger.LogInfo("Thread_QUOTE_OSAsync");
             try
             {
                 await Task.Run(() => this.m_crfOS.ReadFileBig());
             }
             catch (Exception ex)
             {
-                logger.LogError("An error occurred: " + ex.Message);
+                Logger.LogError("An error occurred: " + ex.Message);
             }
         }
         public async Task Thread_QUOTE_FROOMAsync()
         {
-            logger.LogInfo("Thread_QUOTE_FROOMAsync");
+            Logger.LogInfo("Thread_QUOTE_FROOMAsync");
             try
             {
                 await Task.Run(() => this.m_crfFROOM.ReadFileBig());
             }
             catch (Exception ex)
             {
-                logger.LogError("An error occurred: " + ex.Message);
+                Logger.LogError("An error occurred: " + ex.Message);
             }
         }
         public async Task Thread_QUOTE_PUT_ADAsync()
         {
-            logger.LogInfo("Thread_QUOTE_PUT_ADAsync");
+            Logger.LogInfo("Thread_QUOTE_PUT_ADAsync");
             try
             {
                 await Task.Run(() => this.m_crfPUT_AD.ReadFileBig());
             }
             catch (Exception ex)
             {
-                logger.LogError("An error occurred: " + ex.Message);
+                Logger.LogError("An error occurred: " + ex.Message);
             }
         }
         public async Task Thread_QUOTE_PUT_EXECAsync()
         {
-            logger.LogInfo("Thread_QUOTE_PUT_EXECAsync");
+            Logger.LogInfo("Thread_QUOTE_PUT_EXECAsync");
             try
             {
                 await Task.Run(() => this.m_crfPUT_EXEC.ReadFileBig());
             }
             catch (Exception ex)
             {
-                logger.LogError("An error occurred: " + ex.Message);
+                Logger.LogError("An error occurred: " + ex.Message);
             }
         }
         public async Task Thread_QUOTE_PUT_DCAsync()
         {
-            logger.LogInfo("Thread_QUOTE_PUT_DCAsync");
+            Logger.LogInfo("Thread_QUOTE_PUT_DCAsync");
             try
             {
                 await Task.Run(() => this.m_crfPUT_DC.ReadFileBig());
             }
             catch (Exception ex)
             {
-                logger.LogError("An error occurred: " + ex.Message);
+                Logger.LogError("An error occurred: " + ex.Message);
             }
         }
         //public async Task Thread_VNX_MARKET_INDEXAsync()
@@ -434,110 +417,110 @@ namespace Make_ET.DataModels
         //}
         public async Task Thread_VNX_INAVAsync()
         {
-            logger.LogInfo("Thread_VNX_INAVAsync");
+            Logger.LogInfo("Thread_VNX_INAVAsync");
             try
             {
                 await Task.Run(() => this.m_crdINAV.ReadFileBig());
             }
             catch (Exception ex)
             {
-                logger.LogError("An error occurred: " + ex.Message);
+                Logger.LogError("An error occurred: " + ex.Message);
             }
         }
         public async Task Thread_VNX_IINDEXAsync()
         {
-            logger.LogInfo("Thread_VNX_IINDEXAsync");
+            Logger.LogInfo("Thread_VNX_IINDEXAsync");
             try
             {
                 await Task.Run(() => this.m_crdIINDEX.ReadFileBig());
             }
             catch (Exception ex)
             {
-                logger.LogError("An error occurred: " + ex.Message);
+                Logger.LogError("An error occurred: " + ex.Message);
             }
         }
         public async Task Thread_VNX_VN30Async()
         {
-            logger.LogInfo("Thread_VNX_VN30Async");
+            Logger.LogInfo("Thread_VNX_VN30Async");
             try
             {
                 await Task.Run(() => this.m_crdVN30Index.ReadFileBig());
             }
             catch (Exception ex)
             {
-                logger.LogError("An error occurred: " + ex.Message);
+                Logger.LogError("An error occurred: " + ex.Message);
             }
         }
         public async Task Thread_VNX_VNINDEXAsync()
         {
-            logger.LogInfo("Thread_VNX_VNINDEXAsync");
+            Logger.LogInfo("Thread_VNX_VNINDEXAsync");
             try
             {
                 await Task.Run(() => this.m_crdVNIndex.ReadFileBig());
             }
             catch (Exception ex)
             {
-                logger.LogError("An error occurred: " + ex.Message);
+                Logger.LogError("An error occurred: " + ex.Message);
             }
         }
         public async Task Thread_VNX_VN100Async()
         {
-            logger.LogInfo("Thread_VNX_VN100Async");
+            Logger.LogInfo("Thread_VNX_VN100Async");
             try
             {
                 await Task.Run(() => this.m_crdVN100Index.ReadFileBig());
             }
             catch (Exception ex)
             {
-                logger.LogError("An error occurred: " + ex.Message);
+                Logger.LogError("An error occurred: " + ex.Message);
             }
         }
         public async Task Thread_VNX_VNALLAsync()
         {
-            logger.LogInfo("Thread_VNX_VNALLAsync");
+            Logger.LogInfo("Thread_VNX_VNALLAsync");
             try
             {
                 await Task.Run(() => this.m_crdVNAllIndex.ReadFileBig());
             }
             catch (Exception ex)
             {
-                logger.LogError("An error occurred: " + ex.Message);
+                Logger.LogError("An error occurred: " + ex.Message);
             }
         }
         public async Task Thread_VNX_VNMIDAsync()
         {
-            logger.LogInfo("Thread_VNX_VNMIDAsync");
+            Logger.LogInfo("Thread_VNX_VNMIDAsync");
             try
             {
                 await Task.Run(() => this.m_crdVNMidIndex.ReadFileBig());
             }
             catch (Exception ex)
             {
-                logger.LogError("An error occurred: " + ex.Message);
+                Logger.LogError("An error occurred: " + ex.Message);
             }
         }
         public async Task Thread_VNX_VNSMLAsync()
         {
-            logger.LogInfo("Thread_VNX_VNSMLAsync");
+            Logger.LogInfo("Thread_VNX_VNSMLAsync");
             try
             {
                 await Task.Run(() => this.m_crdVNSmlIndex.ReadFileBig());
             }
             catch (Exception ex)
             {
-                logger.LogError("An error occurred: " + ex.Message);
+                Logger.LogError("An error occurred: " + ex.Message);
             }
         }
         public async Task Thread_VNX_VNXALLAsync()
         {
-            logger.LogInfo("Thread_VNX_VNXALLAsync");
+            Logger.LogInfo("Thread_VNX_VNXALLAsync");
             try
             {
                 await Task.Run(() => this.m_crdVNXAllIndex.ReadFileBig());
             }
             catch (Exception ex)
             {
-                logger.LogError("An error occurred: " + ex.Message);
+                Logger.LogError("An error occurred: " + ex.Message);
             }
         }
         private enum PUT_EXEC_SUM
@@ -547,7 +530,7 @@ namespace Make_ET.DataModels
         }
         private long GetSum(int intStockNo, CGlobal.PUT_EXEC[] arrsttPUT_EXEC, PUT_EXEC_SUM PES)
         {
-            logger.LogInfo("GetSum");
+            Logger.LogInfo("GetSum");
             try
             {
                 long intSum = 0;
@@ -567,7 +550,7 @@ namespace Make_ET.DataModels
         }
         private string GetRightStatus(CGlobal.SECURITY stt)
         {
-            logger.LogInfo("GetRightStatus");
+            Logger.LogInfo("GetRightStatus");
             try
             {
                 string c = "", v = "";
@@ -609,7 +592,7 @@ namespace Make_ET.DataModels
         }
         public bool UpdateFullRowQuote(CGlobal.SECURITY[] arrsttSECURITY, CGlobal.LS[] arrsttLS, CGlobal.OS[] arrsttOS, CGlobal.FROOM[] arrsttFROOM)
         {
-            logger.LogInfo("UpdateFullRowQuote");
+            Logger.LogInfo("UpdateFullRowQuote");
             int intCe = 0, intFl = 0;           //count tổng số mã có giá khớp = > < so vs tc
             try
             {
@@ -775,14 +758,14 @@ namespace Make_ET.DataModels
             }
             catch (Exception ex)
             { 
-                logger.LogError("An error occurred: " + ex.Message); 
+                Logger.LogError("An error occurred: " + ex.Message); 
             }
 
             return true;
         }
         public bool UpdateFULL_ROW_PT(CGlobal.PUT_AD[] arrsttPUT_AD, CGlobal.SECURITY[] arrsttSECURITY, CGlobal.PUT_EXEC[] arrsttPUT_EXEC, CGlobal.PUT_DC[] arrsttPUT_DC)
         {
-            logger.LogInfo("UpdateFULL_ROW_PT");
+            Logger.LogInfo("UpdateFULL_ROW_PT");
             try
             {
                 //UPDATE PUT_AD
@@ -915,13 +898,13 @@ namespace Make_ET.DataModels
             }
             catch (Exception ex)
             {
-                logger.LogError("An error occurred: " + ex.Message);
+                Logger.LogError("An error occurred: " + ex.Message);
             }
             return true;
         }
         public bool UpdateFULL_ROW_INDEX()
         {
-            logger.LogInfo("UpdateFULL_ROW_INDEX");
+            Logger.LogInfo("UpdateFULL_ROW_INDEX");
             try
             {
                 //MARKET_STAT
@@ -1042,13 +1025,13 @@ namespace Make_ET.DataModels
             }
             catch (Exception ex)
             {
-                logger.LogError("An error occurred: " + ex.Message);
+                Logger.LogError("An error occurred: " + ex.Message);
             }
             return true;
         }
         public string IniReadValue(string Section, string Key)
         {
-            logger.LogInfo("IniReadValue");
+            Logger.LogInfo("IniReadValue");
             try
             {
                 StringBuilder temp = new StringBuilder(VALUE_LENGTH_MAX);
@@ -1062,7 +1045,7 @@ namespace Make_ET.DataModels
         }
         public void Redis_S5G_ET_QUOTE()
         {
-            logger.LogInfo("Redis_S5G_ET_QUOTE");
+            Logger.LogInfo("Redis_S5G_ET_QUOTE");
             string Redis_message = "<p>S5G_ET_QUOTE saved successfully</p>";
             Connection.ConnectionRedis();
             IDatabase db = Connection.GetRedisDatabase();
@@ -1075,7 +1058,7 @@ namespace Make_ET.DataModels
             }
             catch(Exception ex)
             {
-                logger.LogError("An error occurred: " + ex.Message);
+                Logger.LogError("An error occurred: " + ex.Message);
             }
             finally
             {
@@ -1085,7 +1068,7 @@ namespace Make_ET.DataModels
         }
         public void Redis_S5G_ET_PT()
         {           
-            logger.LogInfo("Redis_S5G_ET_PT");
+            Logger.LogInfo("Redis_S5G_ET_PT");
             string Redis_message = "<p>S5G_ET_PT saved successfully</p>";
             Connection.ConnectionRedis();
             IDatabase db = Connection.GetRedisDatabase();
@@ -1098,7 +1081,7 @@ namespace Make_ET.DataModels
             }
             catch(Exception ex)
             {                
-                logger.LogError("An error occurred: " + ex.Message);
+                Logger.LogError("An error occurred: " + ex.Message);
             }
             finally
             {
@@ -1108,7 +1091,7 @@ namespace Make_ET.DataModels
         }
         public void Redis_S5G__ET_INDEX()
         {
-            logger.LogInfo("Redis_S5G__ET_INDEX");
+            Logger.LogInfo("Redis_S5G__ET_INDEX");
             string Redis_message = "<p>S5G__ET_INDEX saved successfully</p>";
             Connection.ConnectionRedis();
             IDatabase db = Connection.GetRedisDatabase();
@@ -1120,7 +1103,7 @@ namespace Make_ET.DataModels
                 Connection.RedisClose();
             }
             catch(Exception ex) { 
-                logger.LogError("An error occurred: " + ex.Message); 
+                Logger.LogError("An error occurred: " + ex.Message); 
             }
             finally
             {
@@ -1130,7 +1113,7 @@ namespace Make_ET.DataModels
         }
         public void Read_LAST_INDEX_HO()
         {
-            logger.LogInfo("Read_LAST_INDEX_HO");
+            Logger.LogInfo("Read_LAST_INDEX_HO");
             Connection.ConnectionRedis();
             IDatabase db = Connection.GetRedisDatabase();
 
@@ -1158,7 +1141,7 @@ namespace Make_ET.DataModels
         }
         public void SaveData()
         {
-            logger.LogInfo("SaveData");
+            Logger.LogInfo("SaveData");
             ConnectionOracle.ConnectOracle();
             OracleConnection conn = ConnectionOracle._oracleconnection;
             //string sqlQuery = "SELECT COUNT(*) FROM STOCK_HCM";
@@ -1208,7 +1191,7 @@ namespace Make_ET.DataModels
             }
             catch (Exception ex)
             {
-                logger.LogError("An error occurred: " + ex.Message);
+                Logger.LogError("An error occurred: " + ex.Message);
             }
             finally
             {
@@ -1217,11 +1200,22 @@ namespace Make_ET.DataModels
         }
         public bool Oracle_STOCK_HCM()
         {
-            logger.LogInfo("Data");
+            Logger.LogInfo("Data");
             STOCK_HCM data = new STOCK_HCM();
             data.Save(m_crfSECURITY);
             return true;
         }
-        
+        public bool S5G_ET_QUOTE()
+        {
+            CGlobal.SECURITY[] arrsttSECURITY = m_crfSECURITY.DataUpdate;
+            CGlobal.LS[] arrsttLS = m_crfLS.DataUpdate;
+            CGlobal.OS[] arrsttOS = m_crfOS.DataUpdate;
+            CGlobal.FROOM[] arrsttFROOM = m_crfFROOM.DataUpdate;
+            FULL_ROW_QUOTE[] arrsttFullRowQuote = m_arrsttFullRowQuote;
+            FULL_ROW_INDEX arrsttFullRowIndex = m_arrsttFullRowIndex;
+            S5G_ET_QUOTE et_quote = new S5G_ET_QUOTE();
+            et_quote.UpdateFullRowQuote(arrsttSECURITY, arrsttLS, arrsttOS, arrsttFROOM, arrsttFullRowQuote, arrsttFullRowIndex);
+            return true;
+        }
     }
 }

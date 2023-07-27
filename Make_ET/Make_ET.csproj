@@ -130,7 +130,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App_Start.cs" />
     <Compile Include="DataModels\CConfig.cs" />
     <Compile Include="DataModels\CLog.cs" />
     <Compile Include="DataModels\CreaderAll.cs" />

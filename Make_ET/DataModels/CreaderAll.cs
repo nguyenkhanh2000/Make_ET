@@ -108,9 +108,8 @@ namespace Make_ET.DataModels
                 return true;
             }
             catch (Exception ex) 
-            {
-                Logger logger = new Logger("D:\\FPTS Job\\log.txt");
-                logger.LogError("An error occurred: " + ex.Message);
+            {                
+                Logger.LogError("An error occurred: " + ex.Message);
                 this.m_intReadErrorTotal++;
                 return false;
             }
