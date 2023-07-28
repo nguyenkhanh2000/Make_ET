@@ -126,8 +126,8 @@ namespace Make_ET.DataModels
             this.m_crfLO.FilePath = @"D:\FPTS Job\FPT_HOSTC_IS\BACKUP22\LO.dat";
             //SECURITY
             this.m_crfSECURITY.FileName = /*this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_FILENAME);// SECURITY*/   "SECURITY";
-            this.m_crfSECURITY.RedisKeyListCode = this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_REDISKEYLISTCODE);// "S5G_OTHER_HO_LIST_CODE";             // S5G_OTHER_HO_LIST_CODE
-            this.m_crfSECURITY.RedisKeyListCodeID = this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_REDISKEYLISTCODEID);//"S5G_OTHER_HO_LIST_CODEID";          // S5G_OTHER_HO_LIST_CODEID
+            this.m_crfSECURITY.RedisKeyListCode = this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_REDISKEYLISTCODE);// "S5G_OTHER_HO_LIST_CODE";            
+            this.m_crfSECURITY.RedisKeyListCodeID = this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_REDISKEYLISTCODEID);//"S5G_OTHER_HO_LIST_CODEID";         
             this.m_crfSECURITY.FilePath = /*this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_FILEPATH); */ @"D:\FPTS Job\FPT_HOSTC_IS\BACKUP22\SECURITY.dat";
             this.m_crfSECURITY.SkipPropertyName = this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_SKIPPROPERTYNAME);//"Ceiling";    // bo qua dong thua ETF
             this.m_crfSECURITY.ColumnListJSON = /*this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_COLUMNLISTJSON);//*/ "StockSymbol|1,Ceiling|100,Floor|100,PriorClosePrice|100,Best3Bid|100,Best3BidVolume|1,Best2Bid|100,Best2BidVolume|1,Best1Bid|100,Best1BidVolume|1,ProjectOpen|100,MatchedVol|1,MatchChange|1,Best1Offer|100,Best1OfferVolume|1,Best2Offer|100,Best2OfferVolume|1,Best3Offer|100,Best3OfferVolume|1,LastVol|1,OpenPrice|100,Highest|100,Lowest|100,CurrentRoom|1";
@@ -207,11 +207,13 @@ namespace Make_ET.DataModels
             {
                 this.Read_LAST_INDEX_HO();
                 this.UpdateFULL_ROW_INDEX();
-                this.UpdateFullRowQuote(this.m_crfSECURITY.DataOld, this.m_crfLS.DataNew, this.m_crfOS.DataNew, this.m_crfFROOM.DataNew);
-                this.UpdateFULL_ROW_PT(this.m_crfPUT_AD.DataOld, this.m_crfSECURITY.DataOld, this.m_crfPUT_EXEC.DataOld, this.m_crfPUT_DC.DataOld);
+                //S5G_ET_QUOTE et_quote = new S5G_ET_QUOTE();
+                //m_arrsttFullRowQuote = et_quote.UpdateFullRowQuote(this.m_crfSECURITY.DataUpdate, this.m_crfLS.DataUpdate, this.m_crfOS.DataUpdate, this.m_crfFROOM.DataUpdate, m_arrsttFullRowQuote, m_arrsttFullRowIndex);
+                this.UpdateFullRowQuote(this.m_crfSECURITY.DataUpdate, this.m_crfLS.DataUpdate, this.m_crfOS.DataUpdate, this.m_crfFROOM.DataUpdate);
+                this.UpdateFULL_ROW_PT(this.m_crfPUT_AD.DataUpdate, this.m_crfSECURITY.DataUpdate, this.m_crfPUT_EXEC.DataUpdate, this.m_crfPUT_DC.DataUpdate);
                 this.Oracle_STOCK_HCM();
-                //this.Redis_S5G_ET_PT();
-                this.S5G_ET_QUOTE();
+                this.Redis_S5G_ET_PT();
+                //this.S5G_ET_QUOTE();
                 this.Redis_S5G_ET_QUOTE();
                 this.Redis_S5G__ET_INDEX();
             }
@@ -603,7 +605,7 @@ namespace Make_ET.DataModels
                 }
                 //chưa init, exit
                 if (this.m_arrsttFullRowQuote == null) return false;
-                //update SECURITY
+                //update SECURITY   
                 if (arrsttSECURITY != null)
                 {
                     for (int i = 0; i < arrsttSECURITY.Length; i++)
@@ -693,8 +695,11 @@ namespace Make_ET.DataModels
                                     Convert.ToSingle(this.m_arrsttFullRowQuote[i].SQ2) +
                                     Convert.ToSingle(this.m_arrsttFullRowQuote[i].SQ1)).ToString();
                     }
-                    ///UPDATE LS (NEW)
-                    //if (this.m_sttFullRowIndex.STAT_ControlCode != CGlobal.MARKET_STAT_ATO && this.m_sttFullRowIndex.STAT_ControlCode != CGlobal.MARKET_STAT_ATC)
+                    
+                }
+                ///UPDATE LS (NEW)
+                if (this.m_arrsttFullRowIndex.STAT_ControlCode != CGlobal.MARKET_STAT_ATO && this.m_arrsttFullRowIndex.STAT_ControlCode != CGlobal.MARKET_STAT_ATC)
+                {
                     int[] stockNoLS;
                     if (arrsttLS != null)
                     {
@@ -728,30 +733,31 @@ namespace Make_ET.DataModels
                             this.m_arrsttFullRowQuote[j].MC = (Convert.ToSingle(this.m_arrsttFullRowQuote[j].MP) - Convert.ToSingle(this.m_arrsttFullRowQuote[j].Re)).ToString(); //13-match change[calculate]                                                                                                                                                                                //break; //exit for j
                         }
                     }
-                    //UPDATE FROOM (NEW)
-                    if (true)
+                }
+                
+                //UPDATE FROOM (NEW)
+                if (true)
+                {
+                    int[] stockNoFROOM;
+                    if (arrsttFROOM != null)
                     {
-                        int[] stockNoFROOM;
-                        if (arrsttFROOM != null)
+                        stockNoFROOM = new int[arrsttFROOM.Length];
+                        for (int k = 0; k < arrsttFROOM.Length; k++)
                         {
-                            stockNoFROOM = new int[arrsttFROOM.Length];
-                            for (int k = 0; k < arrsttFROOM.Length; k++)
-                            {
-                                stockNoFROOM[k] = arrsttFROOM[k].StockNo;
-                            }
+                            stockNoFROOM[k] = arrsttFROOM[k].StockNo;
                         }
-                        else
-                            stockNoFROOM = new int[0];
-                        for (int j = 0; j < this.m_arrsttFullRowQuote.Length; j++)
+                    }
+                    else
+                        stockNoFROOM = new int[0];
+                    for (int j = 0; j < this.m_arrsttFullRowQuote.Length; j++)
+                    {
+                        int indexFROOM = Array.LastIndexOf(stockNoFROOM, m_arrsttFullRowQuote[j].SN);
+                        if (indexFROOM != -1)
                         {
-                            int indexFROOM = Array.LastIndexOf(stockNoFROOM, m_arrsttFullRowQuote[j].SN);
-                            if (indexFROOM != -1)
-                            {
-                                //lock(m_crfOS) { }
-                                this.m_arrsttFullRowQuote[j].FB = arrsttFROOM[indexFROOM].BuyVolume.ToString();                 //26 - foreign buy (quantity) [FROOM]
-                                this.m_arrsttFullRowQuote[j].FS = arrsttFROOM[indexFROOM].SellVolume.ToString();                //27 - foreign sell (quantiry) [FROOM]
-                                this.m_arrsttFullRowQuote[j].FR = arrsttFROOM[indexFROOM].CurrentRoom.ToString();               //28 - foreign room (current) [FROOM]
-                            }
+                            //lock(m_crfOS) { }
+                            this.m_arrsttFullRowQuote[j].FB = arrsttFROOM[indexFROOM].BuyVolume.ToString();                 //26 - foreign buy (quantity) [FROOM]
+                            this.m_arrsttFullRowQuote[j].FS = arrsttFROOM[indexFROOM].SellVolume.ToString();                //27 - foreign sell (quantiry) [FROOM]
+                            this.m_arrsttFullRowQuote[j].FR = arrsttFROOM[indexFROOM].CurrentRoom.ToString();               //28 - foreign room (current) [FROOM]
                         }
                     }
                 }
@@ -1205,17 +1211,17 @@ namespace Make_ET.DataModels
             data.Save(m_crfSECURITY);
             return true;
         }
-        public bool S5G_ET_QUOTE()
-        {
-            CGlobal.SECURITY[] arrsttSECURITY = m_crfSECURITY.DataUpdate;
-            CGlobal.LS[] arrsttLS = m_crfLS.DataUpdate;
-            CGlobal.OS[] arrsttOS = m_crfOS.DataUpdate;
-            CGlobal.FROOM[] arrsttFROOM = m_crfFROOM.DataUpdate;
-            FULL_ROW_QUOTE[] arrsttFullRowQuote = m_arrsttFullRowQuote;
-            FULL_ROW_INDEX arrsttFullRowIndex = m_arrsttFullRowIndex;
-            S5G_ET_QUOTE et_quote = new S5G_ET_QUOTE();
-            et_quote.UpdateFullRowQuote(arrsttSECURITY, arrsttLS, arrsttOS, arrsttFROOM, arrsttFullRowQuote, arrsttFullRowIndex);
-            return true;
-        }
+        //public bool S5G_ET_QUOTE()
+        //{
+        //    CGlobal.SECURITY[] arrsttSECURITY = m_crfSECURITY.DataUpdate;
+        //    CGlobal.LS[] arrsttLS = m_crfLS.DataUpdate;
+        //    CGlobal.OS[] arrsttOS = m_crfOS.DataUpdate;
+        //    CGlobal.FROOM[] arrsttFROOM = m_crfFROOM.DataUpdate;
+        //    FULL_ROW_QUOTE[] arrsttFullRowQuote = m_arrsttFullRowQuote;
+        //    FULL_ROW_INDEX arrsttFullRowIndex = m_arrsttFullRowIndex;
+        //    S5G_ET_QUOTE et_quote = new S5G_ET_QUOTE();
+        //    et_quote.UpdateFullRowQuote(arrsttSECURITY, arrsttLS, arrsttOS, arrsttFROOM, arrsttFullRowQuote, arrsttFullRowIndex);
+        //    return true;
+        //}
     }
 }

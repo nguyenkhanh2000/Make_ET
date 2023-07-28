@@ -24,7 +24,7 @@ namespace Make_ET
         {
             App_MakeET().GetAwaiter().GetResult();
             //Start_App();
-            // Keep the program running to allow the Timer to trigger the event
+            //// Keep the program running to allow the Timer to trigger the event
             //Console.WriteLine("Press any key to exit...");
             //Console.ReadKey();
         }           
@@ -38,8 +38,8 @@ namespace Make_ET
         }
         static void CheckAndRunMakeET(object sender, ElapsedEventArgs e)
         {
-            int targetHour = 15;
-            int targetMinute = 17;
+            int targetHour = 10;
+            int targetMinute = 57;
 
             //Get the current time
             DateTime currentTime = DateTime.Now;
