@@ -364,8 +364,8 @@ namespace Make_ET.DataModels
             {
                 this.m_strFilePath = value;
                 this.m_strFilePath = this.m_strFilePath
-                    .Replace("(dd)", /*DateTime.Now.ToString("dd")*/"22")
-                    .Replace("(MM)", /*DateTime.Now.ToString("MM")*/"06")
+                    .Replace("(dd)", /*DateTime.Now.ToString("dd")*/"28")
+                    .Replace("(MM)", /*DateTime.Now.ToString("MM")*/"07")
                     .Replace("(yyyy)", /*DateTime.Now.ToString("yyyy")*/"2023")
                     ;
             }

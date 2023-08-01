@@ -131,7 +131,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataModels\CConfig.cs" />
-    <Compile Include="DataModels\CLog.cs" />
     <Compile Include="DataModels\CreaderAll.cs" />
     <Compile Include="DataModels\CGlobal.cs" />
     <Compile Include="DataModels\CReaderBase.cs" />
@@ -144,6 +143,8 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Redis\Connection.cs" />
+    <Compile Include="Redis\S5G_ET_INDEX.cs" />
+    <Compile Include="Redis\S5G_ET_PT.cs" />
     <Compile Include="Redis\S5G_ET_QUOTE.cs" />
   </ItemGroup>
   <ItemGroup>

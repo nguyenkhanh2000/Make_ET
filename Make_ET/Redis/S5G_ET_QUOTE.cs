@@ -12,7 +12,9 @@ namespace Make_ET.Redis
 {
     public class S5G_ET_QUOTE
     {
-        public FULL_ROW_QUOTE[] UpdateFullRowQuote(CGlobal.SECURITY[] arrsttSECURITY, CGlobal.LS[] arrsttLS, CGlobal.OS[] arrsttOS, CGlobal.FROOM[] arrsttFROOM, FULL_ROW_QUOTE[] m_arrsttFullRowQuote,FULL_ROW_INDEX m_arrsttFullRowIndex)
+        public FULL_ROW_QUOTE[] m_arrsttFullRowQuote;
+
+        public FULL_ROW_QUOTE[] UpdateFullRowQuote(CGlobal.SECURITY[] arrsttSECURITY, CGlobal.LS[] arrsttLS, CGlobal.OS[] arrsttOS, CGlobal.FROOM[] arrsttFROOM, FULL_ROW_INDEX m_arrsttFullRowIndex)
         {
             int intCe = 0, intFl = 0;           //count tổng số mã có giá khớp = > < so vs tc
             try
@@ -87,6 +89,17 @@ namespace Make_ET.Redis
                         m_arrsttFullRowQuote[i].SQ2 = arrsttSECURITY[i].Best2OfferVolume.ToString();                // 17 - sell quantity 2
                         m_arrsttFullRowQuote[i].SP3 = arrsttSECURITY[i].Best3Offer.ToString();                      // 18 - sell price 3
                         m_arrsttFullRowQuote[i].SQ3 = arrsttSECURITY[i].Best3OfferVolume.ToString();
+                        //BQ4 = KL mua 4+ = TotalBidQtty - BQ1 - BQ2 - BQ3 [tu tinh]
+                        //m_arrsttFullRowQuote[i].BQ4 = (Convert.ToSingle(m_arrsttFullRowQuote[i].TQ) -
+                        //            Convert.ToSingle(m_arrsttFullRowQuote[i].BQ3) -
+                        //            Convert.ToSingle(m_arrsttFullRowQuote[i].BQ2) -
+                        //            Convert.ToSingle(m_arrsttFullRowQuote[i].BQ1)).ToString();
+                        //m_arrsttFullRowQuote[i].SQ4 = (Convert.ToSingle(m_arrsttFullRowQuote[i].TQ) +
+                        //            Convert.ToSingle(m_arrsttFullRowQuote[i].SQ3) +
+                        //            Convert.ToSingle(m_arrsttFullRowQuote[i].SQ2) +
+                        //            Convert.ToSingle(m_arrsttFullRowQuote[i].SQ1)).ToString();
+                        if (m_arrsttFullRowQuote[i].BQ4 == null) m_arrsttFullRowQuote[i].BQ4 = "0";
+                        if (m_arrsttFullRowQuote[i].SQ4 == null) m_arrsttFullRowQuote[i].SQ4 = "0";
 
                         m_arrsttFullRowQuote[i].TQ = arrsttSECURITY[i].LastVol.ToString();                          // 21 - total quantity (NM)
                         if (m_arrsttFullRowQuote[i].Op == "" || m_arrsttFullRowQuote[i].Op == "0" || m_arrsttFullRowQuote[i].Op == null)            //2015-12-21 09:38:04 ngocta2
@@ -99,23 +112,14 @@ namespace Make_ET.Redis
                         //m_arrsttFullRowQuote[i].ST = new string(arrsttSECURITY[i].StockType).Trim();
                         m_arrsttFullRowQuote[i].PO = arrsttSECURITY[i].ProjectOpen.ToString();                      // 31 - hidden - ProjectOpen         
                         m_arrsttFullRowQuote[i].Ri = GetRightStatus(arrsttSECURITY[i]);                      // 32 - hidden - Rights 
-                        if (m_arrsttFullRowQuote[i].TQO == null) m_arrsttFullRowQuote[i].TQO = "0";
-
-                        //m_arrsttFullRowQuote[i].BQ4 += (Convert.ToSingle(m_arrsttFullRowQuote[i].TQ) -
-                        //            Convert.ToSingle(m_arrsttFullRowQuote[i].BQ3) -
-                        //            Convert.ToSingle(m_arrsttFullRowQuote[i].BQ2) -
-                        //            Convert.ToSingle(m_arrsttFullRowQuote[i].BQ1)).ToString();
-                        m_arrsttFullRowQuote[i].BQ4 = (Convert.ToSingle(m_arrsttFullRowQuote[i].TQ) -
-                                    Convert.ToSingle(m_arrsttFullRowQuote[i].BQ3) -
-                                    Convert.ToSingle(m_arrsttFullRowQuote[i].BQ2) -
-                                    Convert.ToSingle(m_arrsttFullRowQuote[i].BQ1)).ToString();
-                        m_arrsttFullRowQuote[i].SQ4 = (Convert.ToSingle(m_arrsttFullRowQuote[i].TQ) +
-                                    Convert.ToSingle(m_arrsttFullRowQuote[i].SQ3) +
-                                    Convert.ToSingle(m_arrsttFullRowQuote[i].SQ2) +
-                                    Convert.ToSingle(m_arrsttFullRowQuote[i].SQ1)).ToString();
+                        //if (m_arrsttFullRowQuote[i].TQO == null) m_arrsttFullRowQuote[i].TQO = "0";
+                        
                     }
-                    ///UPDATE LS (NEW)
-                    //if (m_sttFullRowIndex.STAT_ControlCode != CGlobal.MARKET_STAT_ATO && m_sttFullRowIndex.STAT_ControlCode != CGlobal.MARKET_STAT_ATC)
+
+                }
+                ///UPDATE LS (NEW)
+                if (m_arrsttFullRowIndex.STAT_ControlCode != CGlobal.MARKET_STAT_ATO && m_arrsttFullRowIndex.STAT_ControlCode != CGlobal.MARKET_STAT_ATC)
+                {
                     int[] stockNoLS;
                     if (arrsttLS != null)
                     {
@@ -143,36 +147,41 @@ namespace Make_ET.Redis
                                 m_arrsttFullRowQuote[j].MPO = arrsttLS[indexLS].Price.ToString();                  // 11 - match price [LS]
                                 m_arrsttFullRowQuote[j].MQO = arrsttLS[indexLS].MatchedVol.ToString();             //12 - match quantity [LS]
                             }
+                            m_arrsttFullRowQuote[j].MPO = arrsttLS[indexLS].Price.ToString();                  // 11 - match price [LS]
+                            m_arrsttFullRowQuote[j].MQO = arrsttLS[indexLS].MatchedVol.ToString();
+
                             m_arrsttFullRowQuote[j].MP = arrsttLS[indexLS].Price.ToString();
                             m_arrsttFullRowQuote[j].MQ = arrsttLS[indexLS].MatchedVol.ToString();
 
                             m_arrsttFullRowQuote[j].MC = (Convert.ToSingle(m_arrsttFullRowQuote[j].MP) - Convert.ToSingle(m_arrsttFullRowQuote[j].Re)).ToString(); //13-match change[calculate]                                                                                                                                                                                //break; //exit for j
+
+                            m_arrsttFullRowQuote[j].TQO = (Convert.ToSingle(m_arrsttFullRowQuote[j].TQ) - Convert.ToSingle(m_arrsttFullRowQuote[j].MQO)).ToString();
                         }
                     }
-                    //UPDATE FROOM (NEW)
-                    if (true)
+                }
+                //UPDATE FROOM (NEW)
+                if (true)
+                {
+                    int[] stockNoFROOM;
+                    if (arrsttFROOM != null)
                     {
-                        int[] stockNoFROOM;
-                        if (arrsttFROOM != null)
+                        stockNoFROOM = new int[arrsttFROOM.Length];
+                        for (int k = 0; k < arrsttFROOM.Length; k++)
                         {
-                            stockNoFROOM = new int[arrsttFROOM.Length];
-                            for (int k = 0; k < arrsttFROOM.Length; k++)
-                            {
-                                stockNoFROOM[k] = arrsttFROOM[k].StockNo;
-                            }
+                            stockNoFROOM[k] = arrsttFROOM[k].StockNo;
                         }
-                        else
-                            stockNoFROOM = new int[0];
-                        for (int j = 0; j < m_arrsttFullRowQuote.Length; j++)
+                    }
+                    else
+                        stockNoFROOM = new int[0];
+                    for (int j = 0; j < m_arrsttFullRowQuote.Length; j++)
+                    {
+                        int indexFROOM = Array.LastIndexOf(stockNoFROOM, m_arrsttFullRowQuote[j].SN);
+                        if (indexFROOM != -1)
                         {
-                            int indexFROOM = Array.LastIndexOf(stockNoFROOM, m_arrsttFullRowQuote[j].SN);
-                            if (indexFROOM != -1)
-                            {
-                                //lock(m_crfOS) { }
-                                m_arrsttFullRowQuote[j].FB = arrsttFROOM[indexFROOM].BuyVolume.ToString();                 //26 - foreign buy (quantity) [FROOM]
-                                m_arrsttFullRowQuote[j].FS = arrsttFROOM[indexFROOM].SellVolume.ToString();                //27 - foreign sell (quantiry) [FROOM]
-                                m_arrsttFullRowQuote[j].FR = arrsttFROOM[indexFROOM].CurrentRoom.ToString();               //28 - foreign room (current) [FROOM]
-                            }
+                            //lock(m_crfOS) { }
+                            m_arrsttFullRowQuote[j].FB = arrsttFROOM[indexFROOM].BuyVolume.ToString();                 //26 - foreign buy (quantity) [FROOM]
+                            m_arrsttFullRowQuote[j].FS = arrsttFROOM[indexFROOM].SellVolume.ToString();                //27 - foreign sell (quantiry) [FROOM]
+                            m_arrsttFullRowQuote[j].FR = arrsttFROOM[indexFROOM].CurrentRoom.ToString();               //28 - foreign room (current) [FROOM]
                         }
                     }
                 }

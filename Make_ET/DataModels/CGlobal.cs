@@ -322,7 +322,7 @@ namespace Make_ET.DataModels
         {
             public long ConfirmNo;                  //Số hiệu giao dịch do máy chủ cấp
             public short StockNo;                   //Mã chứng khoán dạng số
-            public int Vol;                         //Khối lượng(long,4)
+            public int Vol;                         //Khối lượng(long,4) 
             public int Price;                       //Giá
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1)]
             public char[] Board;                    //Bảng giao dịch  B:BigLotBoard

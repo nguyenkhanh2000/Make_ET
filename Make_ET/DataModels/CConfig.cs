@@ -13,6 +13,9 @@ namespace Make_ET.DataModels
         public const string KEY_ET_PT = "S5G__ET_PT";
         public const string KEY_ET_Index = "S5G__ET_INDEX";
 
+        public const string directoryPath = /*@"D:\FPTS Job\FPT_HOSTC_IS\BACKUP22\"; */       @"D:\FPTS_Test\BACKUP28\";
+        public const string directoryPath_Index = /*@"D:\FPTS Job\VNX\"; */          @"D:\FPTS_Test\FPT_VNX\"; 
+
         public const string INI_SECTION_SECURITY = "SECURITY";
         public const string INI_SECTION_SECURITYOL = "SECURITYOL";
         public const string INI_SECTION_TOTALMKT = "TOTALMKT";

@@ -1,5 +1,6 @@
 ﻿using Make_ET;
 using Make_ET.DataModels;
+using Make_ET.Log;
 using Make_ET.Oracle;
 using Make_ET.Redis;
 using Newtonsoft.Json;
@@ -53,7 +54,7 @@ namespace Make_ET
         static async Task App_MakeET()
         {
             DataModels.ReadFile reader = new DataModels.ReadFile();
-            //reader.Thread_QUOTE_SECURITY();
+
             await reader.Thread_QUOTE_MARKET_STATAsync();
             await reader.Thread_QUOTE_SECURITYAsync();
             await reader.Thread_QUOTE_LSAsync();
