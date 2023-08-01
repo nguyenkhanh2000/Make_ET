@@ -37,8 +37,7 @@ namespace Make_ET.Redis
                 this.m_arrsttFullRowIndex.VNI_NoChangeVolume = VNINDEX.NoChangeVolume.ToString();
                 this.m_arrsttFullRowIndex.VNI_Up = VNINDEX.Up.ToString();
                 this.m_arrsttFullRowIndex.VNI_Down = VNINDEX.Down.ToString();
-                this.m_arrsttFullRowIndex.VNI_NoChange = VNINDEX.NoChange.ToString();
-                
+                this.m_arrsttFullRowIndex.VNI_NoChange = VNINDEX.NoChange.ToString();             
                 this.m_arrsttFullRowIndex.VNI_Change = (Convert.ToDouble(this.m_arrsttFullRowIndex.VNI_IndexValue) - m_LIH.Data[0].VNIndex).ToString(CConfig.FORMAT_INDEX_CHANGE);
                 this.m_arrsttFullRowIndex.VNI_ChangePercent = ((Convert.ToDouble(this.m_arrsttFullRowIndex.VNI_Change) / m_LIH.Data[0].VNIndex) * 100).ToString(CConfig.FORMAT_INDEX_CHANGE);
                 VNX_MARKET_INDEX VN30 = arr_VN30Index[arr_VN30Index.Length - 1];

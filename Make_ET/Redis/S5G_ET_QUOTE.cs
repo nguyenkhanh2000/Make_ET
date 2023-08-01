@@ -1,4 +1,5 @@
 ﻿using Make_ET.DataModels;
+using Make_ET.Log;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 using System;
@@ -16,6 +17,7 @@ namespace Make_ET.Redis
 
         public FULL_ROW_QUOTE[] UpdateFullRowQuote(CGlobal.SECURITY[] arrsttSECURITY, CGlobal.LS[] arrsttLS, CGlobal.OS[] arrsttOS, CGlobal.FROOM[] arrsttFROOM, FULL_ROW_INDEX m_arrsttFullRowIndex)
         {
+            Logger.LogInfo("Update_Full_Row_Quote");
             int intCe = 0, intFl = 0;           //count tổng số mã có giá khớp = > < so vs tc
             try
             {
@@ -70,8 +72,7 @@ namespace Make_ET.Redis
                         {
                             //if (m_sttFullRowIndex.STAT_ControlCode == CGlobal.MARKET_STAT_CLO && arrsttSECURITY[i].ProjectOpen.ToString()=="0")
                             if (m_arrsttFullRowIndex.STAT_ControlCode == CGlobal.MARKET_STAT_CLO)
-                            {
-                                // 2015-06-29 17:00:11 huyNQ 2015-06-30 15:07:08 ngocta2
+                            {                               
                                 if (m_arrsttFullRowQuote[i].MPO != null)
                                     m_arrsttFullRowQuote[i].MP = m_arrsttFullRowQuote[i].MPO;
                                 if (m_arrsttFullRowQuote[i].MQO != null)
@@ -102,7 +103,7 @@ namespace Make_ET.Redis
                         if (m_arrsttFullRowQuote[i].SQ4 == null) m_arrsttFullRowQuote[i].SQ4 = "0";
 
                         m_arrsttFullRowQuote[i].TQ = arrsttSECURITY[i].LastVol.ToString();                          // 21 - total quantity (NM)
-                        if (m_arrsttFullRowQuote[i].Op == "" || m_arrsttFullRowQuote[i].Op == "0" || m_arrsttFullRowQuote[i].Op == null)            //2015-12-21 09:38:04 ngocta2
+                        if (m_arrsttFullRowQuote[i].Op == "" || m_arrsttFullRowQuote[i].Op == "0" || m_arrsttFullRowQuote[i].Op == null)            
                             m_arrsttFullRowQuote[i].Op = arrsttSECURITY[i].OpenPrice.ToString(); 						 // 22 - open (NM)   [OS=>SECURITY]
                         m_arrsttFullRowQuote[i].Hi = arrsttSECURITY[i].Highest.ToString();                          // 23 - highest (NM)
                         m_arrsttFullRowQuote[i].Lo = arrsttSECURITY[i].Lowest.ToString();
@@ -115,7 +116,6 @@ namespace Make_ET.Redis
                         //if (m_arrsttFullRowQuote[i].TQO == null) m_arrsttFullRowQuote[i].TQO = "0";
                         
                     }
-
                 }
                 ///UPDATE LS (NEW)
                 if (m_arrsttFullRowIndex.STAT_ControlCode != CGlobal.MARKET_STAT_ATO && m_arrsttFullRowIndex.STAT_ControlCode != CGlobal.MARKET_STAT_ATC)
@@ -154,8 +154,11 @@ namespace Make_ET.Redis
                             m_arrsttFullRowQuote[j].MQ = arrsttLS[indexLS].MatchedVol.ToString();
 
                             m_arrsttFullRowQuote[j].MC = (Convert.ToSingle(m_arrsttFullRowQuote[j].MP) - Convert.ToSingle(m_arrsttFullRowQuote[j].Re)).ToString(); //13-match change[calculate]                                                                                                                                                                                //break; //exit for j
-
-                            m_arrsttFullRowQuote[j].TQO = (Convert.ToSingle(m_arrsttFullRowQuote[j].TQ) - Convert.ToSingle(m_arrsttFullRowQuote[j].MQO)).ToString();
+                            if (m_arrsttFullRowQuote[j].PO == "0")
+                            {
+                                m_arrsttFullRowQuote[j].TQO = m_arrsttFullRowQuote[j].TQ;
+                            }
+                            else m_arrsttFullRowQuote[j].TQO = (Convert.ToSingle(m_arrsttFullRowQuote[j].TQ) - Convert.ToSingle(m_arrsttFullRowQuote[j].MQO)).ToString();
                         }
                     }
                 }
@@ -191,6 +194,8 @@ namespace Make_ET.Redis
 
             return m_arrsttFullRowQuote;
         }
+
+        //Trả về quyền chuyển khoản
         private string GetRightStatus(CGlobal.SECURITY stt)
         {
             try

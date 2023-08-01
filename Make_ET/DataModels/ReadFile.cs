@@ -24,13 +24,14 @@ namespace Make_ET.DataModels
     public class ReadFile
     {          
         CGlobal.FULL_ROW_QUOTE[] m_arrsttFullRowQuote;
+        CGlobal.FULL_ROW_PT m_arrstt_ROWPT;
+        CGlobal.FULL_ROW_INDEX m_arrsttFullRowIndex;
+        CGlobal.LastIndexHO m_LIH;
+
         CGlobal.FULL_PUT_AD[] m_arrstt_PUT_AD_BUY;
         CGlobal.FULL_PUT_AD[] m_arrstt_PUT_AD_SELL;
         CGlobal.FULL_PUT_EXEC[] m_arrstt_PUT_EXEC;
         CGlobal.FULL_PUT_EXEC[] m_arrstt_PUT_DC;
-        CGlobal.FULL_ROW_PT m_arrstt_ROWPT;
-        CGlobal.FULL_ROW_INDEX m_arrsttFullRowIndex;
-        CGlobal.LastIndexHO m_LIH;
 
         public CreaderAll<CGlobal.LS> arrsttLS;
         public CreaderAll<CGlobal.FROOM> arrsttFROOM;
@@ -199,7 +200,7 @@ namespace Make_ET.DataModels
         }
         public void Update_FULL()
         {
-            Logger.LogInfo("Update_FULL_Redis");
+            Logger.LogInfo("Update_FULL_Redis()");
             try
             {
                 this.Read_LAST_INDEX_HO();
@@ -264,22 +265,7 @@ namespace Make_ET.DataModels
         //    }
 
         //}
-        public void Thread_QUOTE_LE()
-        {
-            Logger.LogInfo("Thread_QUOTE_LE");
-            Task.Run(() =>
-            {
-                try
-                {
-                    this.m_crfLE.ReadFileBig();
-                }
-                catch (Exception ex)
-                {
-                    Logger.LogError("An error occurred: " + ex.Message);
-                }
-
-            });
-        }
+        
         public async Task Thread_QUOTE_LSAsync()
         {
             Logger.LogInfo("Thread_QUOTE_LSAsync");
@@ -770,145 +756,145 @@ namespace Make_ET.DataModels
 
             return true;
         }
-        ////public bool UpdateFULL_ROW_PT(CGlobal.PUT_AD[] arrsttPUT_AD, CGlobal.SECURITY[] arrsttSECURITY, CGlobal.PUT_EXEC[] arrsttPUT_EXEC, CGlobal.PUT_DC[] arrsttPUT_DC)
-        ////{
-        ////    Logger.LogInfo("UpdateFULL_ROW_PT");
-        ////    try
-        ////    {
-        ////        //UPDATE PUT_AD
-        ////        if (arrsttPUT_AD != null)
-        ////        {
-        ////            var buyList = new List<CGlobal.FULL_PUT_AD>();
-        ////            var sellList = new List<CGlobal.FULL_PUT_AD>();
-        ////            int intAutoBuy = 0;
-        ////            int intAutoSell = 0;
-        ////            string Codes = "";
-        ////            for (int i = 0; i < arrsttPUT_AD.Length; i++)
-        ////            {
-        ////                string side = new string(arrsttPUT_AD[i].Side).Trim();
-        ////                if (side == "B")
-        ////                {
-        ////                    intAutoBuy++;
-        ////                    for (int j = 0; j < arrsttSECURITY.Length; j++)
-        ////                    {
-        ////                        if (arrsttSECURITY[j].StockNo == arrsttPUT_AD[i].StockNo)
-        ////                        {
-        ////                            Codes = new string(arrsttSECURITY[j].StockSymbol).Trim();
-        ////                            break;
-        ////                        }
-        ////                    }
-        ////                    buyList.Add(new CGlobal.FULL_PUT_AD
-        ////                    {
-        ////                        Auto = intAutoBuy.ToString(),
-        ////                        Code = Codes,
-        ////                        Price = arrsttPUT_AD[i].Price.ToString(),
-        ////                        Quantity = arrsttPUT_AD[i].Vol.ToString(),
-        ////                        Time = arrsttPUT_AD[i].Time.ToString(),
-        ////                        TradeID = arrsttPUT_AD[i].TradeID.ToString()
-        ////                    });
-        ////                }
-        ////                else if (side == "S")
-        ////                {
-        ////                    intAutoSell++;
-        ////                    for (int j = 0; j < arrsttSECURITY.Length; j++)
-        ////                    {
-        ////                        if (arrsttSECURITY[j].StockNo == arrsttPUT_AD[i].StockNo)
-        ////                        {
-        ////                            Codes = new string(arrsttSECURITY[j].StockSymbol).Trim();
-        ////                            break;
-        ////                        }
-        ////                    }
-        ////                    sellList.Add(new CGlobal.FULL_PUT_AD
-        ////                    {
-        ////                        Auto = intAutoSell.ToString(),
-        ////                        Code = Codes,
-        ////                        Price = arrsttPUT_AD[i].Price.ToString(),
-        ////                        Quantity = arrsttPUT_AD[i].Vol.ToString(),
-        ////                        Time = arrsttPUT_AD[i].Time.ToString(),
-        ////                        TradeID = arrsttPUT_AD[i].TradeID.ToString()
-        ////                    });
-        ////                }
-        ////                m_arrstt_PUT_AD_BUY = buyList.ToArray();
-        ////                m_arrstt_PUT_AD_SELL = sellList.ToArray();
-        ////            }
-        ////        }
-        ////        int[] stockNoSECURITY;
-        ////        stockNoSECURITY = new int[arrsttSECURITY.Length];
-        ////        for (int k = 0; k < arrsttSECURITY.Length; k++)
-        ////        {
-        ////            stockNoSECURITY[k] = arrsttSECURITY[k].StockNo;
-        ////        }
-        ////        //UPDATE PUT_EXEC                              
-        ////        if (arrsttPUT_EXEC != null)
-        ////        {
-        ////            if (m_arrstt_PUT_EXEC == null && arrsttPUT_EXEC != null)
-        ////            {
-        ////                Array.Resize(ref m_arrstt_PUT_EXEC, arrsttPUT_EXEC.Length);
-        ////            }
-        ////            if (m_arrstt_PUT_EXEC == null) return false;
-        ////            for (int i = 0; i < arrsttPUT_EXEC.Length; i++)
-        ////            {
-        ////                int indexPUT_EXEC = Array.LastIndexOf(stockNoSECURITY, arrsttPUT_EXEC[i].StockNo);
-        ////                m_arrstt_PUT_EXEC[i].Auto = (i + 1).ToString();
-        ////                m_arrstt_PUT_EXEC[i].Code = m_arrsttFullRowQuote[indexPUT_EXEC].Co.ToString();
-        ////                m_arrstt_PUT_EXEC[i].Re = m_arrsttFullRowQuote[indexPUT_EXEC].Re.ToString();
-        ////                m_arrstt_PUT_EXEC[i].Ce = m_arrsttFullRowQuote[indexPUT_EXEC].Ce.ToString();
-        ////                m_arrstt_PUT_EXEC[i].Fl = m_arrsttFullRowQuote[indexPUT_EXEC].Fl.ToString();
-        ////                m_arrstt_PUT_EXEC[i].PTPrice = arrsttPUT_EXEC[i].Price.ToString();
-        ////                m_arrstt_PUT_EXEC[i].PTQuantity = arrsttPUT_EXEC[i].Vol.ToString();
-        ////                m_arrstt_PUT_EXEC[i].PTTotalQuantity = this.GetSum(arrsttPUT_EXEC[i].StockNo, arrsttPUT_EXEC, PUT_EXEC_SUM.TOTAL_QUANTITY).ToString();
-        ////                m_arrstt_PUT_EXEC[i].PTTotalValue = this.GetSum(arrsttPUT_EXEC[i].StockNo, arrsttPUT_EXEC, PUT_EXEC_SUM.TOTAL_VALUE).ToString();
-        ////                m_arrstt_PUT_EXEC[i].NMTotalQuantity = this.m_arrsttFullRowQuote[indexPUT_EXEC].TQ;
-        ////                m_arrstt_PUT_EXEC[i].NMPTTotalQuantity = (Convert.ToInt64(m_arrstt_PUT_EXEC[i].PTTotalQuantity) + Convert.ToInt64(m_arrstt_PUT_EXEC[i].NMTotalQuantity)).ToString();
-        ////                m_arrstt_PUT_EXEC[i].ListingQuantity = "0";
-        ////                m_arrstt_PUT_EXEC[i].Time = "";
-        ////                m_arrstt_PUT_EXEC[i].ConfirmNo = arrsttPUT_EXEC[i].ConfirmNo.ToString();
-        ////            }
-        ////        }
-        ////        //UPDATE PUT_DC
-        ////        if (arrsttPUT_DC != null)
-        ////        {
-        ////            if (m_arrstt_PUT_DC == null && arrsttPUT_DC != null)
-        ////            {
-        ////                Array.Resize(ref m_arrstt_PUT_DC, arrsttPUT_DC.Length);
-        ////            }
-        ////            if (m_arrstt_PUT_DC == null) return false;
-        ////            for (int i = 0; i < arrsttPUT_DC.Length; i++)
-        ////            {
-        ////                // tim index cua Element trong this.m_arrsttFullRowQuote co SN=arrsttPUT_DC[i].StockNo
-        ////                //int intIndex = Array.FindIndex(this.m_arrsttFullRowQuote, row => row.SN == arrsttPUT_DC[i].StockNo);
-        ////                int indexPUT_DC = Array.LastIndexOf(stockNoSECURITY, arrsttPUT_DC[i].StockNo);
-        ////                if (indexPUT_DC >= 0 && indexPUT_DC < m_arrsttFullRowQuote.Length)
-        ////                {
-        ////                    m_arrstt_PUT_DC[i].Auto = (i + 1).ToString();
-        ////                    m_arrstt_PUT_DC[i].Code = m_arrsttFullRowQuote[indexPUT_DC].Co;
-        ////                    m_arrstt_PUT_DC[i].Re = "0";
-        ////                    m_arrstt_PUT_DC[i].Ce = "0";
-        ////                    m_arrstt_PUT_DC[i].Fl = "0";
-        ////                    m_arrstt_PUT_DC[i].PTPrice = arrsttPUT_DC[i].Price.ToString();
-        ////                    m_arrstt_PUT_DC[i].PTQuantity = arrsttPUT_DC[i].Vol.ToString();
-        ////                    m_arrstt_PUT_DC[i].PTTotalQuantity = "0";
-        ////                    m_arrstt_PUT_DC[i].PTTotalValue = "0";
-        ////                    m_arrstt_PUT_DC[i].NMTotalQuantity = "0";
-        ////                    m_arrstt_PUT_DC[i].NMPTTotalQuantity = "0";
-        ////                    m_arrstt_PUT_DC[i].ListingQuantity = "0";
-        ////                    m_arrstt_PUT_DC[i].Time = "";
-        ////                    m_arrstt_PUT_DC[i].ConfirmNo = arrsttPUT_DC[i].ConfirmNo.ToString();
-        ////                    /*Array.Resize(ref m_arrstt_PUT_DC, arrsttPUT_DC.Length - 1);*/
-        ////                }
-        ////            }
-        ////        }
-        ////        m_arrstt_ROWPT.PUT_AD_BUY = m_arrstt_PUT_AD_BUY;
-        ////        m_arrstt_ROWPT.PUT_AD_SELL = m_arrstt_PUT_AD_SELL;
-        ////        m_arrstt_ROWPT.PUT_EXEC = m_arrstt_PUT_EXEC;
-        ////        m_arrstt_ROWPT.PUT_DC = m_arrstt_PUT_DC;
-        ////    }
-        ////    catch (Exception ex)
-        ////    {
-        ////        Logger.LogError("An error occurred: " + ex.Message);
-        ////    }
-        ////    return true;
-        ////}
+        public bool UpdateFULL_ROW_PT(CGlobal.PUT_AD[] arrsttPUT_AD, CGlobal.SECURITY[] arrsttSECURITY, CGlobal.PUT_EXEC[] arrsttPUT_EXEC, CGlobal.PUT_DC[] arrsttPUT_DC)
+        {
+            Logger.LogInfo("UpdateFULL_ROW_PT");
+            try
+            {
+                //UPDATE PUT_AD
+                if (arrsttPUT_AD != null)
+                {
+                    var buyList = new List<CGlobal.FULL_PUT_AD>();
+                    var sellList = new List<CGlobal.FULL_PUT_AD>();
+                    int intAutoBuy = 0;
+                    int intAutoSell = 0;
+                    string Codes = "";
+                    for (int i = 0; i < arrsttPUT_AD.Length; i++)
+                    {
+                        string side = new string(arrsttPUT_AD[i].Side).Trim();
+                        if (side == "B")
+                        {
+                            intAutoBuy++;
+                            for (int j = 0; j < arrsttSECURITY.Length; j++)
+                            {
+                                if (arrsttSECURITY[j].StockNo == arrsttPUT_AD[i].StockNo)
+                                {
+                                    Codes = new string(arrsttSECURITY[j].StockSymbol).Trim();
+                                    break;
+                                }
+                            }
+                            buyList.Add(new CGlobal.FULL_PUT_AD
+                            {
+                                Auto = intAutoBuy.ToString(),
+                                Code = Codes,
+                                Price = arrsttPUT_AD[i].Price.ToString(),
+                                Quantity = arrsttPUT_AD[i].Vol.ToString(),
+                                Time = arrsttPUT_AD[i].Time.ToString(),
+                                TradeID = arrsttPUT_AD[i].TradeID.ToString()
+                            });
+                        }
+                        else if (side == "S")
+                        {
+                            intAutoSell++;
+                            for (int j = 0; j < arrsttSECURITY.Length; j++)
+                            {
+                                if (arrsttSECURITY[j].StockNo == arrsttPUT_AD[i].StockNo)
+                                {
+                                    Codes = new string(arrsttSECURITY[j].StockSymbol).Trim();
+                                    break;
+                                }
+                            }
+                            sellList.Add(new CGlobal.FULL_PUT_AD
+                            {
+                                Auto = intAutoSell.ToString(),
+                                Code = Codes,
+                                Price = arrsttPUT_AD[i].Price.ToString(),
+                                Quantity = arrsttPUT_AD[i].Vol.ToString(),
+                                Time = arrsttPUT_AD[i].Time.ToString(),
+                                TradeID = arrsttPUT_AD[i].TradeID.ToString()
+                            });
+                        }
+                        m_arrstt_PUT_AD_BUY = buyList.ToArray();
+                        m_arrstt_PUT_AD_SELL = sellList.ToArray();
+                    }
+                }
+                int[] stockNoSECURITY;
+                stockNoSECURITY = new int[arrsttSECURITY.Length];
+                for (int k = 0; k < arrsttSECURITY.Length; k++)
+                {
+                    stockNoSECURITY[k] = arrsttSECURITY[k].StockNo;
+                }
+                //UPDATE PUT_EXEC                              
+                if (arrsttPUT_EXEC != null)
+                {
+                    if (m_arrstt_PUT_EXEC == null && arrsttPUT_EXEC != null)
+                    {
+                        Array.Resize(ref m_arrstt_PUT_EXEC, arrsttPUT_EXEC.Length);
+                    }
+                    if (m_arrstt_PUT_EXEC == null) return false;
+                    for (int i = 0; i < arrsttPUT_EXEC.Length; i++)
+                    {
+                        int indexPUT_EXEC = Array.LastIndexOf(stockNoSECURITY, arrsttPUT_EXEC[i].StockNo);
+                        m_arrstt_PUT_EXEC[i].Auto = (i + 1).ToString();
+                        m_arrstt_PUT_EXEC[i].Code = m_arrsttFullRowQuote[indexPUT_EXEC].Co.ToString();
+                        m_arrstt_PUT_EXEC[i].Re = m_arrsttFullRowQuote[indexPUT_EXEC].Re.ToString();
+                        m_arrstt_PUT_EXEC[i].Ce = m_arrsttFullRowQuote[indexPUT_EXEC].Ce.ToString();
+                        m_arrstt_PUT_EXEC[i].Fl = m_arrsttFullRowQuote[indexPUT_EXEC].Fl.ToString();
+                        m_arrstt_PUT_EXEC[i].PTPrice = arrsttPUT_EXEC[i].Price.ToString();
+                        m_arrstt_PUT_EXEC[i].PTQuantity = arrsttPUT_EXEC[i].Vol.ToString();
+                        m_arrstt_PUT_EXEC[i].PTTotalQuantity = this.GetSum(arrsttPUT_EXEC[i].StockNo, arrsttPUT_EXEC, PUT_EXEC_SUM.TOTAL_QUANTITY).ToString();
+                        m_arrstt_PUT_EXEC[i].PTTotalValue = this.GetSum(arrsttPUT_EXEC[i].StockNo, arrsttPUT_EXEC, PUT_EXEC_SUM.TOTAL_VALUE).ToString();
+                        m_arrstt_PUT_EXEC[i].NMTotalQuantity = this.m_arrsttFullRowQuote[indexPUT_EXEC].TQ;
+                        m_arrstt_PUT_EXEC[i].NMPTTotalQuantity = (Convert.ToInt64(m_arrstt_PUT_EXEC[i].PTTotalQuantity) + Convert.ToInt64(m_arrstt_PUT_EXEC[i].NMTotalQuantity)).ToString();
+                        m_arrstt_PUT_EXEC[i].ListingQuantity = "0";
+                        m_arrstt_PUT_EXEC[i].Time = "";
+                        m_arrstt_PUT_EXEC[i].ConfirmNo = arrsttPUT_EXEC[i].ConfirmNo.ToString();
+                    }
+                }
+                //UPDATE PUT_DC
+                if (arrsttPUT_DC != null)
+                {
+                    if (m_arrstt_PUT_DC == null && arrsttPUT_DC != null)
+                    {
+                        Array.Resize(ref m_arrstt_PUT_DC, arrsttPUT_DC.Length);
+                    }
+                    if (m_arrstt_PUT_DC == null) return false;
+                    for (int i = 0; i < arrsttPUT_DC.Length; i++)
+                    {
+                        // tim index cua Element trong this.m_arrsttFullRowQuote co SN=arrsttPUT_DC[i].StockNo
+                        //int intIndex = Array.FindIndex(this.m_arrsttFullRowQuote, row => row.SN == arrsttPUT_DC[i].StockNo);
+                        int indexPUT_DC = Array.LastIndexOf(stockNoSECURITY, arrsttPUT_DC[i].StockNo);
+                        if (indexPUT_DC >= 0 && indexPUT_DC < m_arrsttFullRowQuote.Length)
+                        {
+                            m_arrstt_PUT_DC[i].Auto = (i + 1).ToString();
+                            m_arrstt_PUT_DC[i].Code = m_arrsttFullRowQuote[indexPUT_DC].Co;
+                            m_arrstt_PUT_DC[i].Re = "0";
+                            m_arrstt_PUT_DC[i].Ce = "0";
+                            m_arrstt_PUT_DC[i].Fl = "0";
+                            m_arrstt_PUT_DC[i].PTPrice = arrsttPUT_DC[i].Price.ToString();
+                            m_arrstt_PUT_DC[i].PTQuantity = arrsttPUT_DC[i].Vol.ToString();
+                            m_arrstt_PUT_DC[i].PTTotalQuantity = "0";
+                            m_arrstt_PUT_DC[i].PTTotalValue = "0";
+                            m_arrstt_PUT_DC[i].NMTotalQuantity = "0";
+                            m_arrstt_PUT_DC[i].NMPTTotalQuantity = "0";
+                            m_arrstt_PUT_DC[i].ListingQuantity = "0";
+                            m_arrstt_PUT_DC[i].Time = "";
+                            m_arrstt_PUT_DC[i].ConfirmNo = arrsttPUT_DC[i].ConfirmNo.ToString();
+                            /*Array.Resize(ref m_arrstt_PUT_DC, arrsttPUT_DC.Length - 1);*/
+                        }
+                    }
+                }
+                m_arrstt_ROWPT.PUT_AD_BUY = m_arrstt_PUT_AD_BUY;
+                m_arrstt_ROWPT.PUT_AD_SELL = m_arrstt_PUT_AD_SELL;
+                m_arrstt_ROWPT.PUT_EXEC = m_arrstt_PUT_EXEC;
+                m_arrstt_ROWPT.PUT_DC = m_arrstt_PUT_DC;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("An error occurred: " + ex.Message);
+            }
+            return true;
+        }
         public bool UpdateFULL_ROW_INDEX()
         {
             Logger.LogInfo("UpdateFULL_ROW_INDEX");
@@ -1191,7 +1177,7 @@ namespace Make_ET.DataModels
         }
         public bool Oracle_STOCK_HCM()
         {
-            Logger.LogInfo("Data");
+            Logger.LogInfo("Oracle_STOCK_HCM");
             STOCK_HCM data = new STOCK_HCM();
             data.Save(m_crfSECURITY);
             return true;

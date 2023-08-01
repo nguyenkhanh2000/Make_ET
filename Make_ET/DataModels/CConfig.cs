@@ -38,7 +38,7 @@ namespace Make_ET.DataModels
         public const string INI_SECTION_CS_VNALL = "CS_VNALL";
         public const string INI_SECTION_CS_VNMID = "CS_VNMID";
         public const string INI_SECTION_CS_VNSML = "CS_VNSML";
-        public const string INI_SECTION_CS_VNXALL = "CS_VNXALL";            // 2016-11-07 10:41:56 ngocta2
+        public const string INI_SECTION_CS_VNXALL = "CS_VNXALL";            
         public const string INI_SECTION_INDEX_VN30 = "INDEX_VN30";
         public const string INI_SECTION_INDEX_VN100 = "INDEX_VN100";
         public const string INI_SECTION_INDEX_VNALL = "INDEX_VNALL";
@@ -46,7 +46,7 @@ namespace Make_ET.DataModels
         public const string INI_SECTION_INDEX_VNSML = "INDEX_VNSML";
         public const string INI_SECTION_INDEX_INAV = "INDEX_INAV";
         public const string INI_SECTION_INDEX_IINDEX = "INDEX_IINDEX";
-        public const string INI_SECTION_INDEX_VNXALL = "INDEX_VNXALL";      // 2016-11-07 10:42:18 ngocta2
+        public const string INI_SECTION_INDEX_VNXALL = "INDEX_VNXALL";      
 
         public const string INI_KEY_INTERVALQUOTE = "IntervalQUOTE";
         public const string INI_KEY_INTERVALINDEX = "IntervalINDEX";
