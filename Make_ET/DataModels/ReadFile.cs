@@ -667,7 +667,7 @@ namespace Make_ET.DataModels
                         this.m_arrsttFullRowQuote[i].Hi = arrsttSECURITY[i].Highest.ToString();                          // 23 - highest (NM)
                         this.m_arrsttFullRowQuote[i].Lo = arrsttSECURITY[i].Lowest.ToString();
                         this.m_arrsttFullRowQuote[i].Av = arrsttSECURITY[i].AvrPrice.ToString();
-                        this.m_arrsttFullRowQuote[i].SN = arrsttSECURITY[i].StockNo;                                     // 29 - hidden - StockNo
+                        this.m_arrsttFullRowQuote[i].SN = arrsttSECURITY[i].StockNo.ToString();                                     // 29 - hidden - StockNo
                         this.m_arrsttFullRowQuote[i].ST = CConfig.Char2String(arrsttSECURITY[i].StockType);             // 30 - hidden - StockType
                         //this.m_arrsttFullRowQuote[i].ST = new string(arrsttSECURITY[i].StockType).Trim();
                         this.m_arrsttFullRowQuote[i].PO = arrsttSECURITY[i].ProjectOpen.ToString();                      // 31 - hidden - ProjectOpen         
@@ -1132,6 +1132,35 @@ namespace Make_ET.DataModels
                 }
             }
         }
+        //public void Read_LAST_INDEX_HO()
+        //{
+        //    Logger.LogInfo("Read_LAST_INDEX_HO");
+        //    Connection.ConnectionRedis();
+        //    IDatabase db = Connection.GetRedisDatabase();
+
+        //    string jsonValue = db.StringGet("S5G_LAST_INDEX_HO");
+
+        //    // No need to use Regex.Unescape, as the JSON string is already well-formed.
+
+        //    if (!string.IsNullOrEmpty(jsonValue))
+        //    {
+        //        m_LIH = JsonConvert.DeserializeObject<LastIndexHO>(jsonValue);
+        //        if (m_LIH != null && m_LIH.Data != null)
+        //        {
+        //            foreach (LastIndexHODetail detail in m_LIH.Data)
+        //            {
+        //                string tradingDate = detail.TradingDate;
+        //                double vnIndex = detail.VNIndex;
+        //                double vnsml = detail.VNSML;
+        //                double vnmid = detail.VNMID;
+        //                double vnall = detail.VNALL;
+        //                double vn30 = detail.VN30;
+        //                double vn100 = detail.VN100;
+        //                double vnxall = detail.VNXALL;
+        //            }
+        //        }
+        //    }
+        //}
         public void SaveData()
         {
             Logger.LogInfo("SaveData");

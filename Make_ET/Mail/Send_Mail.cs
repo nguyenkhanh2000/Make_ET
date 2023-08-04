@@ -15,7 +15,7 @@ namespace Make_ET.Mail
         {
             try
             {
-                //set up the email message
+                //set up the email messagee
                 var message = new MimeMessage();
                 message.From.Add(new MailboxAddress("Khanh Nguyen", "khanhnv2000@gmail.com"));
                 message.To.Add(new MailboxAddress("Trendy HP", "hptrendy@gmail.com"));

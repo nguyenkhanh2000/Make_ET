@@ -1,12 +1,6 @@
 ﻿using Make_ET.DataModels;
 using Make_ET.Log;
-using Newtonsoft.Json;
-using StackExchange.Redis;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static Make_ET.DataModels.CGlobal;
 
 namespace Make_ET.Redis
@@ -108,7 +102,7 @@ namespace Make_ET.Redis
                         m_arrsttFullRowQuote[i].Hi = arrsttSECURITY[i].Highest.ToString();                          // 23 - highest (NM)
                         m_arrsttFullRowQuote[i].Lo = arrsttSECURITY[i].Lowest.ToString();
                         m_arrsttFullRowQuote[i].Av = arrsttSECURITY[i].AvrPrice.ToString();
-                        m_arrsttFullRowQuote[i].SN = arrsttSECURITY[i].StockNo;                                     // 29 - hidden - StockNo
+                        m_arrsttFullRowQuote[i].SN = arrsttSECURITY[i].StockNo.ToString();                                     // 29 - hidden - StockNo
                         m_arrsttFullRowQuote[i].ST = CConfig.Char2String(arrsttSECURITY[i].StockType);             // 30 - hidden - StockType
                         //m_arrsttFullRowQuote[i].ST = new string(arrsttSECURITY[i].StockType).Trim();
                         m_arrsttFullRowQuote[i].PO = arrsttSECURITY[i].ProjectOpen.ToString();                      // 31 - hidden - ProjectOpen         
@@ -134,7 +128,7 @@ namespace Make_ET.Redis
 
                     for (int j = 0; j < m_arrsttFullRowQuote.Length; j++)
                     {
-                        int indexLS = Array.LastIndexOf(stockNoLS, m_arrsttFullRowQuote[j].SN);
+                        int indexLS = Array.LastIndexOf(stockNoLS, int.Parse(m_arrsttFullRowQuote[j].SN));
                         if (indexLS != -1)
                         {
                             if (m_arrsttFullRowIndex.STAT_ControlCode == CGlobal.MARKET_STAT_CON) //phien lien tuc
@@ -158,7 +152,19 @@ namespace Make_ET.Redis
                             {
                                 m_arrsttFullRowQuote[j].TQO = m_arrsttFullRowQuote[j].TQ;
                             }
-                            else m_arrsttFullRowQuote[j].TQO = (Convert.ToSingle(m_arrsttFullRowQuote[j].TQ) - Convert.ToSingle(m_arrsttFullRowQuote[j].MQO)).ToString();
+                            else
+                            {
+                                m_arrsttFullRowQuote[j].TQO = (Convert.ToSingle(m_arrsttFullRowQuote[j].TQ) - Convert.ToSingle(m_arrsttFullRowQuote[j].MQO)).ToString();
+                            } 
+                        }
+                        else
+                        {                           
+                            m_arrsttFullRowQuote[j].MPO = "0";
+                            m_arrsttFullRowQuote[j].MQO = "0";
+                            m_arrsttFullRowQuote[j].MP = "0";
+                            m_arrsttFullRowQuote[j].MQ = "0";
+                            m_arrsttFullRowQuote[j].TQO = "0";
+                            m_arrsttFullRowQuote[j].MC = "0";
                         }
                     }
                 }
@@ -178,7 +184,7 @@ namespace Make_ET.Redis
                         stockNoFROOM = new int[0];
                     for (int j = 0; j < m_arrsttFullRowQuote.Length; j++)
                     {
-                        int indexFROOM = Array.LastIndexOf(stockNoFROOM, m_arrsttFullRowQuote[j].SN);
+                        int indexFROOM = Array.LastIndexOf(stockNoFROOM, int.Parse(m_arrsttFullRowQuote[j].SN));
                         if (indexFROOM != -1)
                         {
                             //lock(m_crfOS) { }

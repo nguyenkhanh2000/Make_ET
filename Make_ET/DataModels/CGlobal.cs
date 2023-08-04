@@ -377,8 +377,9 @@ namespace Make_ET.DataModels
             public string FB; //{get; set; }  // 26 - foreign buy (quantity)
             public string FS; //{get; set; }  // 27 - foreign sell (quantity)
             public string FR; //{get; set; }  // 28 - foreign room (current)
-            //-------------------
-            public int SN; //{get; set; }     // 29 - hidden - StockNo
+                              //-------------------
+            /* public int SN;*/ //{get; set; }     // 29 - hidden - StockNo
+            public string SN;
             public string ST; //{get; set; }  // 30 - hidden - StockType
             public string PO; //{get; set; }  // 31 - hidden - ProjectOpen
             public string Ri; //{get; set; }  // 32 - hidden - Rights 

@@ -24,21 +24,25 @@ namespace Make_ET.Redis
         }
         private long GetSum(int intStockNo, CGlobal.PUT_EXEC[] arrsttPUT_EXEC, PUT_EXEC_SUM PES)
         {
-            //Logger.LogInfo("GetSum");
+            Logger.LogInfo("GetSum");
             try
-            {
+            {                
                 long intSum = 0;
                 for (int i = 0; i < arrsttPUT_EXEC.Length; i++)
                 {
-                    if (PES == PUT_EXEC_SUM.TOTAL_QUANTITY)
-                        intSum += Convert.ToInt64(arrsttPUT_EXEC[i].Vol);
-                    if (PES == PUT_EXEC_SUM.TOTAL_VALUE)
-                        intSum += Convert.ToInt64(arrsttPUT_EXEC[i].Vol) * Convert.ToInt64(arrsttPUT_EXEC[i].Price) * 10;
+                    if (intStockNo == arrsttPUT_EXEC[i].StockNo)
+                    {
+                        if (PES == PUT_EXEC_SUM.TOTAL_QUANTITY)
+                            intSum += Convert.ToInt64(arrsttPUT_EXEC[i].Vol);
+                        if (PES == PUT_EXEC_SUM.TOTAL_VALUE)
+                            intSum += Convert.ToInt64(arrsttPUT_EXEC[i].Vol) * Convert.ToInt64(arrsttPUT_EXEC[i].Price) * 10;
+                    }                      
                 }
                 return intSum;
             }
             catch (Exception ex)
             {
+                //Logger.LogError("An error occurred: " + ex.Message);
                 throw ex;
             }
         }
@@ -124,7 +128,9 @@ namespace Make_ET.Redis
                     for (int i = 0; i < arrsttPUT_EXEC.Length; i++)
                     {
                         //int indexPUT_EXEC = Array.LastIndexOf(stockNoSECURITY, arrsttPUT_EXEC[i].StockNo);
-                        int indexPUT_EXEC = Array.FindIndex(m_arrsttFullRowQuote,row => row.SN == arrsttPUT_EXEC[i].StockNo);
+                        int indexPUT_EXEC = Array.FindIndex(m_arrsttFullRowQuote,row => int.Parse(row.SN) == arrsttPUT_EXEC[i].StockNo);
+                        //int intSN = int.Parse(m_arrsttFullRowQuote.SN);
+                        //int indexPUT_EXEC = Array.FindIndex(m_arrsttFullRowQuote, row => row.int.Parse(SN) == arrsttPUT_EXEC[i].StockNo);
                         m_arrstt_PUT_EXEC[i].Auto = (i + 1).ToString();
                         m_arrstt_PUT_EXEC[i].Code = m_arrsttFullRowQuote[indexPUT_EXEC].Co.ToString();
                         m_arrstt_PUT_EXEC[i].Re = m_arrsttFullRowQuote[indexPUT_EXEC].Re.ToString();
@@ -132,10 +138,10 @@ namespace Make_ET.Redis
                         m_arrstt_PUT_EXEC[i].Fl = m_arrsttFullRowQuote[indexPUT_EXEC].Fl.ToString();
                         m_arrstt_PUT_EXEC[i].PTPrice = arrsttPUT_EXEC[i].Price.ToString();
                         m_arrstt_PUT_EXEC[i].PTQuantity = arrsttPUT_EXEC[i].Vol.ToString();
-                        m_arrstt_PUT_EXEC[i].PTTotalQuantity = this.GetSum(arrsttPUT_EXEC[i].StockNo, arrsttPUT_EXEC, PUT_EXEC_SUM.TOTAL_QUANTITY).ToString();
-                        m_arrstt_PUT_EXEC[i].PTTotalValue = this.GetSum(arrsttPUT_EXEC[i].StockNo, arrsttPUT_EXEC, PUT_EXEC_SUM.TOTAL_VALUE).ToString();
+                        m_arrstt_PUT_EXEC[i].PTTotalQuantity = this.GetSum(arrsttPUT_EXEC[i].StockNo, arrsttPUT_EXEC, PUT_EXEC_SUM.TOTAL_QUANTITY).ToString(); //sai
+                        m_arrstt_PUT_EXEC[i].PTTotalValue = this.GetSum(arrsttPUT_EXEC[i].StockNo, arrsttPUT_EXEC, PUT_EXEC_SUM.TOTAL_VALUE).ToString(); //sai
                         m_arrstt_PUT_EXEC[i].NMTotalQuantity = m_arrsttFullRowQuote[indexPUT_EXEC].TQ;
-                        m_arrstt_PUT_EXEC[i].NMPTTotalQuantity = (Convert.ToInt64(m_arrstt_PUT_EXEC[i].PTTotalQuantity) + Convert.ToInt64(m_arrstt_PUT_EXEC[i].NMTotalQuantity)).ToString();
+                        m_arrstt_PUT_EXEC[i].NMPTTotalQuantity = (Convert.ToInt64(m_arrstt_PUT_EXEC[i].PTTotalQuantity) + Convert.ToInt64(m_arrstt_PUT_EXEC[i].NMTotalQuantity)).ToString();  //sai
                         m_arrstt_PUT_EXEC[i].ListingQuantity = "0";
                         m_arrstt_PUT_EXEC[i].Time = "";
                         m_arrstt_PUT_EXEC[i].ConfirmNo = arrsttPUT_EXEC[i].ConfirmNo.ToString();
