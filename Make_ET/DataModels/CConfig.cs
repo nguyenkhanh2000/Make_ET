@@ -8,7 +8,7 @@ namespace Make_ET.DataModels
 {
     public class CConfig
     {
-        public const string LOG_FILE_PATH = "D:\\FPTS Job\\log.txt";
+        public const string LOG_FILE_PATH = "D:\\FPTS Job\\Logger.txt";
         public const string KEY_ET_QUOTE = "S5G__ET_QUOTE";
         public const string KEY_ET_PT = "S5G__ET_PT";
         public const string KEY_ET_Index = "S5G__ET_INDEX";

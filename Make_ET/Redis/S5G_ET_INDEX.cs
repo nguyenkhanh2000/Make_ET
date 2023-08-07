@@ -24,6 +24,7 @@ namespace Make_ET.Redis
                 this.m_arrsttFullRowIndex.STAT_ControlCode = /*mARKET_STAT.ControlCode.ToString();*/new string(market_stat.ControlCode).Trim();
                 this.m_arrsttFullRowIndex.STAT_Time = market_stat.Time.ToString();
                 DateTime datetime = new DateTime(2023, 7, 28);
+                //DateTime datetime = DateTime.Now;
                 string formattedDate = datetime.ToString("dd/MM/yyyy");
                 this.m_arrsttFullRowIndex.STAT_Date = formattedDate;
                 VNX_MARKET_VNINDEX VNINDEX = arr_VNIndex[arr_VNIndex.Length - 1];
@@ -127,13 +128,13 @@ namespace Make_ET.Redis
                 CGlobal.INAV INAV = arr_INAV[arr_INAV.Length - 1];
                 this.m_arrsttFullRowIndex.INAV_iNAV = INAV.iNAV.ToString();
                 this.m_arrsttFullRowIndex.INAV_StockNo = INAV.StockNo.ToString();
-                this.m_arrsttFullRowIndex.INAV_StockSymbol = new string(INAV.StockSymbol).Trim();/*this.m_crdINAV.Char2String(INAV.StockSymbol);*/
+                this.m_arrsttFullRowIndex.INAV_StockSymbol = /*new string(INAV.StockSymbol).Trim();*/CConfig.Char2String(INAV.StockSymbol);
                 this.m_arrsttFullRowIndex.INAV_Time = INAV.Time.ToString();
 
                 CGlobal.IINDEX IINDEX = arr_IINDEX[arr_IINDEX.Length - 1];
-                this.m_arrsttFullRowIndex.IINDEX_ETFSymbol = /*IINDEX.ETFSymbol.ToString();*/ new string(IINDEX.ETFSymbol).Trim();
+                this.m_arrsttFullRowIndex.IINDEX_ETFSymbol = IINDEX.ETFSymbol.ToString(); /*new string(IINDEX.ETFSymbol).Trim();*/
                 this.m_arrsttFullRowIndex.IINDEX_iIndex = IINDEX.iIndex.ToString();
-                this.m_arrsttFullRowIndex.IINDEX_IndexSymbol = /*IINDEX.IndexSymbol.ToString();*/ new string(IINDEX.IndexSymbol).Trim();
+                this.m_arrsttFullRowIndex.IINDEX_IndexSymbol = IINDEX.IndexSymbol.ToString(); /*new string(IINDEX.IndexSymbol).Trim();*/
                 this.m_arrsttFullRowIndex.IINDEX_iIndexSymbol = IINDEX.Time.ToString();
                 this.m_arrsttFullRowIndex.IINDEX_Time = IINDEX.Time.ToString();
             }

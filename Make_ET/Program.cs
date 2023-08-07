@@ -27,7 +27,7 @@ namespace Make_ET
             //Start_App();
             //// Keep the program running to allow the Timer to trigger the event
             //Console.WriteLine("Press any key to exit...");
-            //Console.ReadKey();           
+            //Console.ReadKey();
         }           
         static void Start_App()
         {
@@ -39,8 +39,8 @@ namespace Make_ET
         }
         static void CheckAndRunMakeET(object sender, ElapsedEventArgs e)
         {
-            int targetHour = 10;
-            int targetMinute = 57;
+            int targetHour = 09;
+            int targetMinute = 47;
 
             //Get the current time
             DateTime currentTime = DateTime.Now;
@@ -79,8 +79,8 @@ namespace Make_ET
             await reader.Thread_VNX_VNSMLAsync();
             await reader.Thread_VNX_VNXALLAsync();
             reader.Update_FULL();
-            DateTime timedone = DateTime.Now;
-            Console.WriteLine("Done!:{0}",timedone);
+            DateTime finishTime = DateTime.Now;
+            Console.WriteLine("Done!:{0}", finishTime);
         }
     }
 }

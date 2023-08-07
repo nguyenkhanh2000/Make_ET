@@ -24,7 +24,7 @@ namespace Make_ET.Redis
         }
         private long GetSum(int intStockNo, CGlobal.PUT_EXEC[] arrsttPUT_EXEC, PUT_EXEC_SUM PES)
         {
-            Logger.LogInfo("GetSum");
+            //Logger.LogInfo("GetSum");
             try
             {                
                 long intSum = 0;
@@ -42,8 +42,9 @@ namespace Make_ET.Redis
             }
             catch (Exception ex)
             {
-                //Logger.LogError("An error occurred: " + ex.Message);
-                throw ex;
+                return -1;
+                Logger.LogError("An error occurred: " + ex.Message);
+                //throw ex;
             }
         }
         //param:(m_arrsttFullRowQuote,m_crfSECURITY.DataUpdate,m_crfPUT_AD.DataUpdate,m_crfPUT_EXEC.DataUpdate,m_crfPUT_DC.DataUpdate,m_arrstt_ROWPT,)
