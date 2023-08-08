@@ -134,7 +134,6 @@
     <Compile Include="DataModels\CreaderAll.cs" />
     <Compile Include="DataModels\CGlobal.cs" />
     <Compile Include="DataModels\CReaderBase.cs" />
-    <Compile Include="DataModels\CreaderF.cs" />
     <Compile Include="DataModels\ReadFile.cs" />
     <Compile Include="Log\Logger.cs" />
     <Compile Include="Mail\Send_Mail.cs" />

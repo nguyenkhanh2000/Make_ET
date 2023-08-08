@@ -23,11 +23,11 @@ namespace Make_ET
         static System.Timers.Timer timer;
         static void Main(string[] args)
         {
-            App_MakeET().GetAwaiter().GetResult();
-            //Start_App();
-            //// Keep the program running to allow the Timer to trigger the event
-            //Console.WriteLine("Press any key to exit...");
-            //Console.ReadKey();
+            //App_MakeET().GetAwaiter().GetResult();
+            Start_App();
+            // Keep the program running to allow the Timer to trigger the event
+            Console.WriteLine("Press any key to exit...");
+            Console.ReadKey();
         }           
         static void Start_App()
         {

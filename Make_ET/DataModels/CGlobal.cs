@@ -509,21 +509,6 @@ namespace Make_ET.DataModels
             public string STAT_Time;
             public string STAT_Date;
 
-            //VNINDEX 2021-05-28 hungtq2
-            //public string VNINDEX_ChangePercent;
-            //public string VNINDEX_Change;
-            //public string VNINDEX_Index;          // 43092     - VNIndex (Long, 4bytes)
-            //public string VNINDEX_TotalTrade;     //  - số lượng giao dịch (long, 4bytes)
-            //public string VNINDEX_TotalShares;      //   - Tổng khối lượng (Double, 8bytes)
-            //public string VNINDEX_TotalValues;     //    - Tổng giá trị (Double, 8bytes)
-            //public string VNINDEX_UpVolume;                //  Tồng KL của các CK tăng giá(Double, 8bytes) …
-            //public string VNINDEX_DownVolume;              //  Tồng KL của các CK giảm giá(Double, 8bytes) …
-            //public string VNINDEX_NoChangeVolume;          // Tổng KL của các CK đứng giá (Double, 8bytes)
-            //public string VNINDEX_Up;                // Short 2 Tổng số CK tăng giá …
-            //public string VNINDEX_Down;              // Short 2 Tổng số CK giảm giá …
-            //public string VNINDEX_NoChange;          // Short 2 Tổng số CK đứng giá …
-            //public string VNINDEX_Time;                // Thời gian của máy chủ giao dịch (Long, 4bytes)
-
             //TOTALMKT, VNINDEX
             public string VNI_ChangePercent;
             public string VNI_Change;
@@ -534,12 +519,12 @@ namespace Make_ET.DataModels
             public string VNI_UpVolume;
             public string VNI_NoChangeVolume;
             public string VNI_DownVolume;
-            public string VNI_Up;     // 4. Up
-            public string VNI_Down;     // 5. Down
+            public string VNI_Up;              // 4. Up
+            public string VNI_Down;            // 5. Down
             public string VNI_NoChange;
             public string VNI_Time;
-            public string VNI_Ceiling;  // so ma tang tran (tu tinh)
-            public string VNI_Floor;    // so ma giam san (tu tinh)
+            public string VNI_Ceiling;         // so ma tang tran (tu tinh)
+            public string VNI_Floor;           // so ma giam san (tu tinh)
             public string VNI_TotalSharesOld; // luu so cu de tinh ra data chart (vol trong tung phut)
 
             //VN30
@@ -589,7 +574,7 @@ namespace Make_ET.DataModels
             public string VNALL_Floor;
             public string VNALL_Time;
 
-            //VNXALL            {2016-10-26 14:28:36 ngocta2}
+            //VNXALL            
             public string VNXALL_ChangePercent;
             public string VNXALL_Change;
             public string VNXALL_IndexValue;

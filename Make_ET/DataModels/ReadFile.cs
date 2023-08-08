@@ -125,26 +125,28 @@ namespace Make_ET.DataModels
             this.m_crfLO.FileName = "LO";
             this.m_crfLO.FilePath = Path.Combine(CConfig.directoryPath, m_crfLO.FileName = "LO" + ".dat");               //@"D:\FPTS_Test\BACKUP28\LO.dat";
             //SECURITY
-            this.m_crfSECURITY.FileName = /*this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_FILENAME);// SECURITY*/   "SECURITY";
-            this.m_crfSECURITY.RedisKeyListCode = this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_REDISKEYLISTCODE);// "S5G_OTHER_HO_LIST_CODE";            
-            this.m_crfSECURITY.RedisKeyListCodeID = this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_REDISKEYLISTCODEID);//"S5G_OTHER_HO_LIST_CODEID";         
-            this.m_crfSECURITY.FilePath = Path.Combine(CConfig.directoryPath, m_crfSECURITY.FileName + ".dat");                                 /*this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_FILEPATH); */ //@"D:\FPTS_Test\BACKUP28\SECURITY.dat";
-            this.m_crfSECURITY.SkipPropertyName = this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_SKIPPROPERTYNAME);//"Ceiling";    // bo qua dong thua ETF
-            this.m_crfSECURITY.ColumnListJSON = /*this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_COLUMNLISTJSON);//*/ "StockSymbol|1,Ceiling|100,Floor|100,PriorClosePrice|100,Best3Bid|100,Best3BidVolume|1,Best2Bid|100,Best2BidVolume|1,Best1Bid|100,Best1BidVolume|1,ProjectOpen|100,MatchedVol|1,MatchChange|1,Best1Offer|100,Best1OfferVolume|1,Best2Offer|100,Best2OfferVolume|1,Best3Offer|100,Best3OfferVolume|1,LastVol|1,OpenPrice|100,Highest|100,Lowest|100,CurrentRoom|1";
-            this.m_crfSECURITY.ColumnListSQL = this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_COLUMNLISTSQL);//"TranID,TranDate,TransDate,Stockno,StockSymbol,StockType,Ceiling,Floor,BigLotValue,SectorNo,Designated,SUSPENSION,Delist,HaltResumeFlag,SPLIT,Benefit,Meeting,Notice,ClientIDRequest,CouponRate,IssueDate,MatureDate,AvrPrice,ParValue,SDCFlag,PriorClosePrice,PriorCloseDate,ProjectOpen,OpenPrice,Last,LastVol,LastVal,Highest,Lowest,Totalshares,TotalValue,AccumulateDeal,BigDeal,BigVolume,BigValue,OddDeal,OddVolume,OddValue,Best1Bid,Best1BidVolume,Best2Bid,Best2BidVolume,Best3Bid,Best3BidVolume,Best1Offer,Best1OfferVolume,Best2Offer,Best2OfferVolume,Best3Offer,Best3OfferVolume,BoardLost,msrepl_tran_version,SecurityNumberOld,SecurityNumberNew,LastQtty,VWAP,Date";// bo qua SecurityName, ko truyen value
-            this.m_crfSECURITY.PropertyNameOfSymbolField = this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_PROPERTYNAMEOFSYMBOLFIELD);//"StockSymbol";
-            this.m_crfSECURITY.PropertyNameOfSymbolIDField = this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_PROPERTYNAMEOFSYMBOLIDFIELD);//"StockNo";
-            this.m_crfSECURITY.IDPropertyName = this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_IDPROPERTYNAME);//"StockNo";
-            this.m_crfSECURITY.TemplateJsonFull = this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_TEMPLATEJSONFULL);//"{\"RowID\":\"(CodeID)\",\"Info\":[(AllElements)]}";
-            this.m_crfSECURITY.TemplateJsonElement = this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_TEMPLATEJSONELEMENT);//"[(Index),(NewValue)]";
-            this.m_crfSECURITY.TemplateSqlFull = this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_TEMPLATESQLFULL);//"EXEC prc_5G_QUOTE_FEEDER_HO_PRS_UPDATE_SECURITY (AllElements)";
-            this.m_crfSECURITY.TemplateSqlElement = this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_TEMPLATESQLELEMENT);//"@(ColumnName)='(NewValue)'";
-            this.m_crfSECURITY.JSONFilterPropertyName = this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_JSONFILTERPROPERTYNAME);//"StockType";
-            this.m_crfSECURITY.JSONFilterValidValue = this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_JSONFILTERVALIDVALUE);//"S,U,E";
-            this.m_crfSECURITY.IsBuildUpdateJSON = /*Convert.ToBoolean(this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_ISBUILDUPDATEJSON));*/true;
-            this.m_crfSECURITY.IsBuildUpdateSQL = /*Convert.ToBoolean(this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_ISBUILDUPDATESQL));//*/true;
-            this.m_crfSECURITY.SkipValueBigger = /*Convert.ToInt32(this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_SKIPVALUEBIGGER));*/ 99999;        // bo qua dong thua ETF
-            this.m_crfSECURITY.ThreadID = /*Convert.ToInt32(this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_THREADID));*/ 1000;
+            this.m_crfSECURITY.FileName = "SECURITY";
+            this.m_crfSECURITY.FilePath = Path.Combine(CConfig.directoryPath, m_crfSECURITY.FileName + ".dat");
+            //this.m_crfSECURITY.FileName = /*this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_FILENAME);// SECURITY*/   "SECURITY";
+            //this.m_crfSECURITY.RedisKeyListCode = this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_REDISKEYLISTCODE);// "S5G_OTHER_HO_LIST_CODE";            
+            //this.m_crfSECURITY.RedisKeyListCodeID = this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_REDISKEYLISTCODEID);//"S5G_OTHER_HO_LIST_CODEID";         
+            //this.m_crfSECURITY.FilePath = Path.Combine(CConfig.directoryPath, m_crfSECURITY.FileName + ".dat");                                 /*this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_FILEPATH); */ //@"D:\FPTS_Test\BACKUP28\SECURITY.dat";
+            //this.m_crfSECURITY.SkipPropertyName = this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_SKIPPROPERTYNAME);//"Ceiling";    // bo qua dong thua ETF
+            //this.m_crfSECURITY.ColumnListJSON = /*this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_COLUMNLISTJSON);//*/ "StockSymbol|1,Ceiling|100,Floor|100,PriorClosePrice|100,Best3Bid|100,Best3BidVolume|1,Best2Bid|100,Best2BidVolume|1,Best1Bid|100,Best1BidVolume|1,ProjectOpen|100,MatchedVol|1,MatchChange|1,Best1Offer|100,Best1OfferVolume|1,Best2Offer|100,Best2OfferVolume|1,Best3Offer|100,Best3OfferVolume|1,LastVol|1,OpenPrice|100,Highest|100,Lowest|100,CurrentRoom|1";
+            //this.m_crfSECURITY.ColumnListSQL = this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_COLUMNLISTSQL);//"TranID,TranDate,TransDate,Stockno,StockSymbol,StockType,Ceiling,Floor,BigLotValue,SectorNo,Designated,SUSPENSION,Delist,HaltResumeFlag,SPLIT,Benefit,Meeting,Notice,ClientIDRequest,CouponRate,IssueDate,MatureDate,AvrPrice,ParValue,SDCFlag,PriorClosePrice,PriorCloseDate,ProjectOpen,OpenPrice,Last,LastVol,LastVal,Highest,Lowest,Totalshares,TotalValue,AccumulateDeal,BigDeal,BigVolume,BigValue,OddDeal,OddVolume,OddValue,Best1Bid,Best1BidVolume,Best2Bid,Best2BidVolume,Best3Bid,Best3BidVolume,Best1Offer,Best1OfferVolume,Best2Offer,Best2OfferVolume,Best3Offer,Best3OfferVolume,BoardLost,msrepl_tran_version,SecurityNumberOld,SecurityNumberNew,LastQtty,VWAP,Date";// bo qua SecurityName, ko truyen value
+            //this.m_crfSECURITY.PropertyNameOfSymbolField = this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_PROPERTYNAMEOFSYMBOLFIELD);//"StockSymbol";
+            //this.m_crfSECURITY.PropertyNameOfSymbolIDField = this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_PROPERTYNAMEOFSYMBOLIDFIELD);//"StockNo";
+            //this.m_crfSECURITY.IDPropertyName = this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_IDPROPERTYNAME);//"StockNo";
+            //this.m_crfSECURITY.TemplateJsonFull = this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_TEMPLATEJSONFULL);//"{\"RowID\":\"(CodeID)\",\"Info\":[(AllElements)]}";
+            //this.m_crfSECURITY.TemplateJsonElement = this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_TEMPLATEJSONELEMENT);//"[(Index),(NewValue)]";
+            //this.m_crfSECURITY.TemplateSqlFull = this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_TEMPLATESQLFULL);//"EXEC prc_5G_QUOTE_FEEDER_HO_PRS_UPDATE_SECURITY (AllElements)";
+            //this.m_crfSECURITY.TemplateSqlElement = this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_TEMPLATESQLELEMENT);//"@(ColumnName)='(NewValue)'";
+            //this.m_crfSECURITY.JSONFilterPropertyName = this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_JSONFILTERPROPERTYNAME);//"StockType";
+            //this.m_crfSECURITY.JSONFilterValidValue = this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_JSONFILTERVALIDVALUE);//"S,U,E";
+            //this.m_crfSECURITY.IsBuildUpdateJSON = /*Convert.ToBoolean(this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_ISBUILDUPDATEJSON));*/true;
+            //this.m_crfSECURITY.IsBuildUpdateSQL = /*Convert.ToBoolean(this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_ISBUILDUPDATESQL));//*/true;
+            //this.m_crfSECURITY.SkipValueBigger = /*Convert.ToInt32(this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_SKIPVALUEBIGGER));*/ 99999;        // bo qua dong thua ETF
+            //this.m_crfSECURITY.ThreadID = /*Convert.ToInt32(this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_THREADID));*/ 1000;
 
             //SECURITYOL
             this.m_crfSECURITYOL.FileName = "SECURITYOL";
@@ -531,6 +533,8 @@ namespace Make_ET.DataModels
                 string jsonData = JsonConvert.SerializeObject(this.m_arrsttFullRowQuote);
                 db.SortedSetAdd(CConfig.KEY_ET_QUOTE, jsonData, dblScore);
                 Connection.RedisClose();
+                Send_Mail sent_mail = new Send_Mail();
+                sent_mail.Send_Message(Redis_message);
             }
             catch(Exception ex)
             {
@@ -538,8 +542,7 @@ namespace Make_ET.DataModels
             }
             finally
             {
-                Send_Mail sent_mail = new Send_Mail();
-                sent_mail.Send_Message(Redis_message);
+                
             }           
         }
         public void Redis_S5G_ET_PT()
@@ -554,6 +557,8 @@ namespace Make_ET.DataModels
                 string jsonData = JsonConvert.SerializeObject(this.m_arrstt_ROWPT);
                 db.SortedSetAdd(CConfig.KEY_ET_PT, jsonData, dblScore);
                 Connection.RedisClose();
+                Send_Mail sent_mail = new Send_Mail();
+                sent_mail.Send_Message(Redis_message);
             }
             catch(Exception ex)
             {                
@@ -561,8 +566,7 @@ namespace Make_ET.DataModels
             }
             finally
             {
-                Send_Mail sent_mail = new Send_Mail();
-                sent_mail.Send_Message(Redis_message);
+                
             }
         }
         public void Redis_S5G__ET_INDEX()
@@ -577,14 +581,15 @@ namespace Make_ET.DataModels
                 string jsonData = JsonConvert.SerializeObject(this.m_arrsttFullRowIndex);
                 db.SortedSetAdd(CConfig.KEY_ET_Index, jsonData, dblScore);
                 Connection.RedisClose();
+                Send_Mail sent_mail = new Send_Mail();
+                sent_mail.Send_Message(Redis_message);
             }
             catch(Exception ex) { 
                 Logger.LogError("An error occurred: " + ex.Message); 
             }
             finally
             {
-                Send_Mail sent_mail = new Send_Mail();
-                sent_mail.Send_Message(Redis_message);
+                
             }
         }
         public void Read_LAST_INDEX_HO()
@@ -622,9 +627,12 @@ namespace Make_ET.DataModels
         }
         public bool Oracle_STOCK_HCM()
         {
+            string Oracle_message = "<p>STOCK_HCM saved successfully</p>";
             Logger.LogInfo("Oracle_STOCK_HCM");
             STOCK_HCM data = new STOCK_HCM();
             data.Save(m_crfSECURITY);
+            Send_Mail sent_mail = new Send_Mail();
+            sent_mail.Send_Message(Oracle_message);
             return true;
         }
         //public bool S5G_ET_QUOTE()
