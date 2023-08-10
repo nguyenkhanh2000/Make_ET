@@ -12,19 +12,20 @@ namespace Make_ET.Redis
     public class S5G_ET_INDEX
     {
         CGlobal.FULL_ROW_INDEX m_arrsttFullRowIndex;
+        
         public FULL_ROW_INDEX UpdateFULL_ROW_INDEX(LastIndexHO m_LIH, CGlobal.MARKET_STAT[] arr_MARKET_STAT, CGlobal.VNX_MARKET_VNINDEX[] arr_VNIndex,
             CGlobal.VNX_MARKET_INDEX[] arr_VN30Index, CGlobal.VNX_MARKET_INDEX[] arr_VN100Index,CGlobal.VNX_MARKET_INDEX[] arr_VNAllIndex,
-            CGlobal.VNX_MARKET_INDEX[] arr_VNXAllIndex,CGlobal.VNX_MARKET_INDEX[] arr_VNMidIndex,CGlobal.VNX_MARKET_INDEX[] arr_VNSmlIndex,CGlobal.INAV[] arr_INAV,CGlobal.IINDEX[] arr_IINDEX)
+            CGlobal.VNX_MARKET_INDEX[] arr_VNXAllIndex,CGlobal.VNX_MARKET_INDEX[] arr_VNMidIndex,CGlobal.VNX_MARKET_INDEX[] arr_VNSmlIndex,CGlobal.INAV[] arr_INAV,CGlobal.IINDEX[] arr_IINDEX,int intCe, int intFl)
         {
             Logger.LogInfo("UpdateFULL_ROW_INDEX");
             try
             {
                 //MARKET_STAT
-                MARKET_STAT market_stat = arr_MARKET_STAT[arr_MARKET_STAT.Length - 1];
-                this.m_arrsttFullRowIndex.STAT_ControlCode = /*mARKET_STAT.ControlCode.ToString();*/new string(market_stat.ControlCode).Trim();
+                MARKET_STAT market_stat = arr_MARKET_STAT[arr_MARKET_STAT.Length - 2];
+                this.m_arrsttFullRowIndex.STAT_ControlCode = /*market_stat.ControlCode.ToString();*/new string(market_stat.ControlCode).Trim();
                 this.m_arrsttFullRowIndex.STAT_Time = market_stat.Time.ToString();
-                //DateTime datetime = new DateTime(2023, 7, 28);
-                DateTime datetime = DateTime.Now;
+                DateTime datetime = new DateTime(2023, 7, 28);
+                //DateTime datetime = DateTime.Now;
                 string formattedDate = datetime.ToString("dd/MM/yyyy");
                 this.m_arrsttFullRowIndex.STAT_Date = formattedDate;
                 VNX_MARKET_VNINDEX VNINDEX = arr_VNIndex[arr_VNIndex.Length - 1];
@@ -39,9 +40,9 @@ namespace Make_ET.Redis
                 this.m_arrsttFullRowIndex.VNI_Up = VNINDEX.Up.ToString();
                 this.m_arrsttFullRowIndex.VNI_Down = VNINDEX.Down.ToString();
                 this.m_arrsttFullRowIndex.VNI_NoChange = VNINDEX.NoChange.ToString(); 
-                //this.m_arrsttFullRowIndex.VNI_Ceiling = 
-                //this.m_arrsttFullRowIndex.VNI_Floor = 
-                //this.m_arrsttFullRowIndex.VNI_TotalSharesOld = 
+                this.m_arrsttFullRowIndex.VNI_Ceiling = intCe.ToString();
+                this.m_arrsttFullRowIndex.VNI_Floor = intFl.ToString();
+                this.m_arrsttFullRowIndex.VNI_TotalSharesOld = "0";
                 this.m_arrsttFullRowIndex.VNI_Change = (Convert.ToDouble(this.m_arrsttFullRowIndex.VNI_IndexValue) - m_LIH.Data[0].VNIndex).ToString(CConfig.FORMAT_INDEX_CHANGE);
                 this.m_arrsttFullRowIndex.VNI_ChangePercent = ((Convert.ToDouble(this.m_arrsttFullRowIndex.VNI_Change) / m_LIH.Data[0].VNIndex) * 100).ToString(CConfig.FORMAT_INDEX_CHANGE);
                 VNX_MARKET_INDEX VN30 = arr_VN30Index[arr_VN30Index.Length - 1];
@@ -143,7 +144,7 @@ namespace Make_ET.Redis
             }
             catch (Exception ex)
             {
-                Logger.LogError("An error occurred: " + ex.Message);
+                Logger.LogError(" S5G_ET_INDEX a error occurred: " + ex.Message);
             }
             return m_arrsttFullRowIndex;
         }

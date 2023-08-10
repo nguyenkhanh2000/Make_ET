@@ -9,7 +9,7 @@ namespace Make_ET.Redis
     {
         public FULL_ROW_QUOTE[] m_arrsttFullRowQuote;
 
-        public FULL_ROW_QUOTE[] UpdateFullRowQuote(CGlobal.SECURITY[] arrsttSECURITY, CGlobal.LS[] arrsttLS, CGlobal.OS[] arrsttOS, CGlobal.FROOM[] arrsttFROOM, FULL_ROW_INDEX m_arrsttFullRowIndex)
+        public (FULL_ROW_QUOTE[],int,int) UpdateFullRowQuote(CGlobal.SECURITY[] arrsttSECURITY, CGlobal.LS[] arrsttLS, CGlobal.OS[] arrsttOS, CGlobal.FROOM[] arrsttFROOM/*, FULL_ROW_INDEX m_arrsttFullRowIndex*/)
         {
             Logger.LogInfo("Update_Full_Row_Quote");
             int intCe = 0, intFl = 0;           //count tổng số mã có giá khớp = > < so vs tc
@@ -21,7 +21,7 @@ namespace Make_ET.Redis
                     Array.Resize(ref m_arrsttFullRowQuote, arrsttSECURITY.Length);
                 }
                 //chưa init, exit
-                if (m_arrsttFullRowQuote == null) return m_arrsttFullRowQuote;
+                if (m_arrsttFullRowQuote == null) return (null,0,0);
                 //update SECURITY
                 if (arrsttSECURITY != null)
                 {
@@ -39,44 +39,44 @@ namespace Make_ET.Redis
                         m_arrsttFullRowQuote[i].BQ2 = arrsttSECURITY[i].Best2BidVolume.ToString();                  // 08 - buy quantity 2
                         m_arrsttFullRowQuote[i].BP1 = arrsttSECURITY[i].Best1Bid.ToString(); /*Get Price(arrsttSECURITY[i].Best1Bid, arrsttSECURITY[i].Best1BidVolume, m_sttFullRowIndex.STAT_ControlCode);*///09 - buy price 1 (arrsttSECURITY[i].Best1Bid.ToString();)
                         m_arrsttFullRowQuote[i].BQ1 = arrsttSECURITY[i].Best1BidVolume.ToString();                  // 10 - buy quantity 1
-
+                        #region 
                         // phien ATO/ATC
-                        if (m_arrsttFullRowIndex.STAT_ControlCode == CGlobal.MARKET_STAT_ATO || m_arrsttFullRowIndex.STAT_ControlCode == CGlobal.MARKET_STAT_ATC)
-                        {
-                            if (m_arrsttFullRowQuote[i].MP != null && arrsttSECURITY[i].ProjectOpen == 0)
-                                if (Convert.ToDouble(m_arrsttFullRowQuote[i].MP) > 0)
-                                    m_arrsttFullRowQuote[i].MPO = m_arrsttFullRowQuote[i].MP;
-                            if (m_arrsttFullRowQuote[i].MQ != null && arrsttSECURITY[i].ProjectOpen == 0)
-                                if (Convert.ToDouble(m_arrsttFullRowQuote[i].MQ) > 0)
-                                    m_arrsttFullRowQuote[i].MQO = m_arrsttFullRowQuote[i].MQ;
+                        //if (m_arrsttFullRowIndex.STAT_ControlCode == CGlobal.MARKET_STAT_ATO || m_arrsttFullRowIndex.STAT_ControlCode == CGlobal.MARKET_STAT_ATC)
+                        //{
+                        //    if (m_arrsttFullRowQuote[i].MP != null && arrsttSECURITY[i].ProjectOpen == 0)
+                        //        if (Convert.ToDouble(m_arrsttFullRowQuote[i].MP) > 0)
+                        //            m_arrsttFullRowQuote[i].MPO = m_arrsttFullRowQuote[i].MP;
+                        //    if (m_arrsttFullRowQuote[i].MQ != null && arrsttSECURITY[i].ProjectOpen == 0)
+                        //        if (Convert.ToDouble(m_arrsttFullRowQuote[i].MQ) > 0)
+                        //            m_arrsttFullRowQuote[i].MQO = m_arrsttFullRowQuote[i].MQ;
 
-                            // chi gan TQ vao TQO 1 lan vao luc bat dau phien ATC
-                            if (m_arrsttFullRowQuote[i].TQO == "0" && m_arrsttFullRowIndex.STAT_ControlCode == CGlobal.MARKET_STAT_ATC)
-                                m_arrsttFullRowQuote[i].TQO = m_arrsttFullRowQuote[i].TQ;
+                        //    // chi gan TQ vao TQO 1 lan vao luc bat dau phien ATC
+                        //    if (m_arrsttFullRowQuote[i].TQO == "0" && m_arrsttFullRowIndex.STAT_ControlCode == CGlobal.MARKET_STAT_ATC)
+                        //        m_arrsttFullRowQuote[i].TQO = m_arrsttFullRowQuote[i].TQ;
 
-                            m_arrsttFullRowQuote[i].MP = arrsttSECURITY[i].ProjectOpen.ToString();          // 11 - match price [LS]
-                            m_arrsttFullRowQuote[i].MQ = "0";     // 12 - match quantity  [LS]
-                            m_arrsttFullRowQuote[i].MC = m_arrsttFullRowQuote[i].MP == null || m_arrsttFullRowQuote[i].MP == "0" ? "0" : (Convert.ToSingle(m_arrsttFullRowQuote[i].MP) - Convert.ToSingle(m_arrsttFullRowQuote[i].Re)).ToString();    // 13 - match change [calculate]
+                        //    m_arrsttFullRowQuote[i].MP = arrsttSECURITY[i].ProjectOpen.ToString();          // 11 - match price [LS]
+                        //    m_arrsttFullRowQuote[i].MQ = "0";     // 12 - match quantity  [LS]
+                        //    m_arrsttFullRowQuote[i].MC = m_arrsttFullRowQuote[i].MP == null || m_arrsttFullRowQuote[i].MP == "0" ? "0" : (Convert.ToSingle(m_arrsttFullRowQuote[i].MP) - Convert.ToSingle(m_arrsttFullRowQuote[i].Re)).ToString();    // 13 - match change [calculate]
 
-                            if (Convert.ToDouble(m_arrsttFullRowQuote[i].MP) == Convert.ToDouble(m_arrsttFullRowQuote[i].Ce)) ++intCe;
-                            if (Convert.ToDouble(m_arrsttFullRowQuote[i].MP) == Convert.ToDouble(m_arrsttFullRowQuote[i].Fl)) ++intFl;
-                        }
+                        //    if (Convert.ToDouble(m_arrsttFullRowQuote[i].MP) == Convert.ToDouble(m_arrsttFullRowQuote[i].Ce)) ++intCe;
+                        //    if (Convert.ToDouble(m_arrsttFullRowQuote[i].MP) == Convert.ToDouble(m_arrsttFullRowQuote[i].Fl)) ++intFl;
+                        //}
                         // phien lien tuc + phien thoa thuan [14:45-15:00]
-                        if (m_arrsttFullRowIndex.STAT_ControlCode == CGlobal.MARKET_STAT_CON || m_arrsttFullRowIndex.STAT_ControlCode == CGlobal.MARKET_STAT_CLO)
-                        {
-                            //if (m_sttFullRowIndex.STAT_ControlCode == CGlobal.MARKET_STAT_CLO && arrsttSECURITY[i].ProjectOpen.ToString()=="0")
-                            if (m_arrsttFullRowIndex.STAT_ControlCode == CGlobal.MARKET_STAT_CLO)
-                            {                               
-                                if (m_arrsttFullRowQuote[i].MPO != null)
-                                    m_arrsttFullRowQuote[i].MP = m_arrsttFullRowQuote[i].MPO;
-                                if (m_arrsttFullRowQuote[i].MQO != null)
-                                    m_arrsttFullRowQuote[i].MQ = m_arrsttFullRowQuote[i].MQO;
-                                m_arrsttFullRowQuote[i].MC = m_arrsttFullRowQuote[i].MP == null || m_arrsttFullRowQuote[i].MP == "0" ? "0" : (Convert.ToSingle(m_arrsttFullRowQuote[i].MP) - Convert.ToSingle(m_arrsttFullRowQuote[i].Re)).ToString();    // 13 - match change [calculate]
-                            }
-                            if (Convert.ToInt32(arrsttSECURITY[i].Last) == Convert.ToInt32(m_arrsttFullRowQuote[i].Ce)) ++intCe;
-                            if (Convert.ToInt32(arrsttSECURITY[i].Last) == Convert.ToInt32(m_arrsttFullRowQuote[i].Fl)) ++intFl;
-                        }
-
+                        //if (m_arrsttFullRowIndex.STAT_ControlCode == CGlobal.MARKET_STAT_CON || m_arrsttFullRowIndex.STAT_ControlCode == CGlobal.MARKET_STAT_CLO)
+                        //{
+                        //    //if (m_sttFullRowIndex.STAT_ControlCode == CGlobal.MARKET_STAT_CLO && arrsttSECURITY[i].ProjectOpen.ToString()=="0")
+                        //    if (m_arrsttFullRowIndex.STAT_ControlCode == CGlobal.MARKET_STAT_CLO)
+                        //    {                               
+                        //        if (m_arrsttFullRowQuote[i].MPO != null)
+                        //            m_arrsttFullRowQuote[i].MP = m_arrsttFullRowQuote[i].MPO;
+                        //        if (m_arrsttFullRowQuote[i].MQO != null)
+                        //            m_arrsttFullRowQuote[i].MQ = m_arrsttFullRowQuote[i].MQO;
+                        //        m_arrsttFullRowQuote[i].MC = m_arrsttFullRowQuote[i].MP == null || m_arrsttFullRowQuote[i].MP == "0" ? "0" : (Convert.ToSingle(m_arrsttFullRowQuote[i].MP) - Convert.ToSingle(m_arrsttFullRowQuote[i].Re)).ToString();    // 13 - match change [calculate]
+                        //    }
+                        //    if (Convert.ToInt32(arrsttSECURITY[i].Last) == Convert.ToInt32(m_arrsttFullRowQuote[i].Ce)) ++intCe;
+                        //    if (Convert.ToInt32(arrsttSECURITY[i].Last) == Convert.ToInt32(m_arrsttFullRowQuote[i].Fl)) ++intFl;
+                        //}
+                        #endregion
                         //m_arrsttFullRowQuote[i].SP1 = GetPrice(arrsttSECURITY[i].Best1Offer, arrsttSECURITY[i].Best1OfferVolume, m_sttFullRowIndex.STAT_ControlCode);// 14 - sell price 1 (arrsttSECURITY[i].Best1Offer.ToString())
                         m_arrsttFullRowQuote[i].SP1 = arrsttSECURITY[i].Best1Offer.ToString();
                         m_arrsttFullRowQuote[i].SQ1 = arrsttSECURITY[i].Best1OfferVolume.ToString();                // 15 - sell quantity 1
@@ -84,6 +84,7 @@ namespace Make_ET.Redis
                         m_arrsttFullRowQuote[i].SQ2 = arrsttSECURITY[i].Best2OfferVolume.ToString();                // 17 - sell quantity 2
                         m_arrsttFullRowQuote[i].SP3 = arrsttSECURITY[i].Best3Offer.ToString();                      // 18 - sell price 3
                         m_arrsttFullRowQuote[i].SQ3 = arrsttSECURITY[i].Best3OfferVolume.ToString();
+                        #region
                         //BQ4 = KL mua 4+ = TotalBidQtty - BQ1 - BQ2 - BQ3 [tu tinh]
                         //m_arrsttFullRowQuote[i].BQ4 = (Convert.ToSingle(m_arrsttFullRowQuote[i].TQ) -
                         //            Convert.ToSingle(m_arrsttFullRowQuote[i].BQ3) -
@@ -93,6 +94,7 @@ namespace Make_ET.Redis
                         //            Convert.ToSingle(m_arrsttFullRowQuote[i].SQ3) +
                         //            Convert.ToSingle(m_arrsttFullRowQuote[i].SQ2) +
                         //            Convert.ToSingle(m_arrsttFullRowQuote[i].SQ1)).ToString();
+                        #endregion
                         if (m_arrsttFullRowQuote[i].BQ4 == null) m_arrsttFullRowQuote[i].BQ4 = "0";
                         if (m_arrsttFullRowQuote[i].SQ4 == null) m_arrsttFullRowQuote[i].SQ4 = "0";
 
@@ -107,67 +109,71 @@ namespace Make_ET.Redis
                         //m_arrsttFullRowQuote[i].ST = new string(arrsttSECURITY[i].StockType).Trim();
                         m_arrsttFullRowQuote[i].PO = arrsttSECURITY[i].ProjectOpen.ToString();                      // 31 - hidden - ProjectOpen         
                         m_arrsttFullRowQuote[i].Ri = GetRightStatus(arrsttSECURITY[i]);                      // 32 - hidden - Rights 
-                        //if (m_arrsttFullRowQuote[i].TQO == null) m_arrsttFullRowQuote[i].TQO = "0";
-                        
+                        //if (m_arrsttFullRowQuote[i].TQO == null) m_arrsttFullRowQuote[i].TQO = "0";               
                     }
                 }
-                ///UPDATE LS (NEW)
-                if (m_arrsttFullRowIndex.STAT_ControlCode != CGlobal.MARKET_STAT_ATO && m_arrsttFullRowIndex.STAT_ControlCode != CGlobal.MARKET_STAT_ATC)
+                //UPDATE LS
+                int[] stockNoLS;
+                if (arrsttLS != null)
                 {
-                    int[] stockNoLS;
-                    if (arrsttLS != null)
+                    stockNoLS = new int[arrsttLS.Length];
+                    for (int k = 0; k < arrsttLS.Length; k++)
                     {
-                        stockNoLS = new int[arrsttLS.Length];
-                        for (int k = 0; k < arrsttLS.Length; k++)
+                        stockNoLS[k] = arrsttLS[k].StockNo;
+                    }
+                }
+                else
+                    stockNoLS = new int[0];
+
+                for (int j = 0; j < m_arrsttFullRowQuote.Length; j++)
+                {
+                    int indexLS = Array.LastIndexOf(stockNoLS, int.Parse(m_arrsttFullRowQuote[j].SN));
+                    if (indexLS != -1)
+                    {
+                        #region
+                        //if (m_arrsttFullRowIndex.STAT_ControlCode == CGlobal.MARKET_STAT_CON) //phien lien tuc
+                        //{
+                        //    m_arrsttFullRowQuote[j].MPO = arrsttLS[indexLS].Price.ToString();              // 11 - match price [LS]
+                        //    m_arrsttFullRowQuote[j].MQO = arrsttLS[indexLS].MatchedVol.ToString();         // 12 - match quantity  [LS]
+                        //}
+                        //if (m_arrsttFullRowIndex.STAT_ControlCode == CGlobal.MARKET_STAT_CLO) //phien thoa thuan 14h45-15h00
+                        //{
+                        //    m_arrsttFullRowQuote[j].MPO = arrsttLS[indexLS].Price.ToString();                  // 11 - match price [LS]
+                        //    m_arrsttFullRowQuote[j].MQO = arrsttLS[indexLS].MatchedVol.ToString();             //12 - match quantity [LS]
+                        //}
+                        #endregion
+                        m_arrsttFullRowQuote[j].MPO = arrsttLS[indexLS].Price.ToString();                  // 11 - match price [LS]
+                        m_arrsttFullRowQuote[j].MQO = arrsttLS[indexLS].MatchedVol.ToString();
+
+                        m_arrsttFullRowQuote[j].MP = arrsttLS[indexLS].Price.ToString();
+                        m_arrsttFullRowQuote[j].MQ = arrsttLS[indexLS].MatchedVol.ToString();
+                        //VNI_Ceiling: Ce = giá khớp - VNI_Floor: Fl = giá khớp
+                        if (Convert.ToDouble(m_arrsttFullRowQuote[j].MP) == Convert.ToDouble(m_arrsttFullRowQuote[j].Ce)) ++intCe;
+                        if (Convert.ToDouble(m_arrsttFullRowQuote[j].MP) == Convert.ToDouble(m_arrsttFullRowQuote[j].Fl)) ++intFl;
+                        m_arrsttFullRowQuote[j].MC = (Convert.ToSingle(m_arrsttFullRowQuote[j].MP) - Convert.ToSingle(m_arrsttFullRowQuote[j].Re)).ToString(); //13-match change[calculate]                                                                                                                                                                                //break; //exit for j
+                        if (m_arrsttFullRowQuote[j].PO == "0")
                         {
-                            stockNoLS[k] = arrsttLS[k].StockNo;
+                            m_arrsttFullRowQuote[j].TQO = m_arrsttFullRowQuote[j].TQ;
+                        }
+                        else
+                        {
+                            m_arrsttFullRowQuote[j].TQO = (Convert.ToSingle(m_arrsttFullRowQuote[j].TQ) - Convert.ToSingle(m_arrsttFullRowQuote[j].MQO)).ToString();
                         }
                     }
                     else
-                        stockNoLS = new int[0];
-
-                    for (int j = 0; j < m_arrsttFullRowQuote.Length; j++)
                     {
-                        int indexLS = Array.LastIndexOf(stockNoLS, int.Parse(m_arrsttFullRowQuote[j].SN));
-                        if (indexLS != -1)
-                        {
-                            if (m_arrsttFullRowIndex.STAT_ControlCode == CGlobal.MARKET_STAT_CON) //phien lien tuc
-                            {
-                                m_arrsttFullRowQuote[j].MPO = arrsttLS[indexLS].Price.ToString();              // 11 - match price [LS]
-                                m_arrsttFullRowQuote[j].MQO = arrsttLS[indexLS].MatchedVol.ToString();         // 12 - match quantity  [LS]
-                            }
-                            if (m_arrsttFullRowIndex.STAT_ControlCode == CGlobal.MARKET_STAT_CLO) //phien thoa thuan 14h45-15h00
-                            {
-                                m_arrsttFullRowQuote[j].MPO = arrsttLS[indexLS].Price.ToString();                  // 11 - match price [LS]
-                                m_arrsttFullRowQuote[j].MQO = arrsttLS[indexLS].MatchedVol.ToString();             //12 - match quantity [LS]
-                            }
-                            m_arrsttFullRowQuote[j].MPO = arrsttLS[indexLS].Price.ToString();                  // 11 - match price [LS]
-                            m_arrsttFullRowQuote[j].MQO = arrsttLS[indexLS].MatchedVol.ToString();
-
-                            m_arrsttFullRowQuote[j].MP = arrsttLS[indexLS].Price.ToString();
-                            m_arrsttFullRowQuote[j].MQ = arrsttLS[indexLS].MatchedVol.ToString();
-
-                            m_arrsttFullRowQuote[j].MC = (Convert.ToSingle(m_arrsttFullRowQuote[j].MP) - Convert.ToSingle(m_arrsttFullRowQuote[j].Re)).ToString(); //13-match change[calculate]                                                                                                                                                                                //break; //exit for j
-                            if (m_arrsttFullRowQuote[j].PO == "0")
-                            {
-                                m_arrsttFullRowQuote[j].TQO = m_arrsttFullRowQuote[j].TQ;
-                            }
-                            else
-                            {
-                                m_arrsttFullRowQuote[j].TQO = (Convert.ToSingle(m_arrsttFullRowQuote[j].TQ) - Convert.ToSingle(m_arrsttFullRowQuote[j].MQO)).ToString();
-                            } 
-                        }
-                        else
-                        {                           
-                            m_arrsttFullRowQuote[j].MPO = "0";
-                            m_arrsttFullRowQuote[j].MQO = "0";
-                            m_arrsttFullRowQuote[j].MP = "0";
-                            m_arrsttFullRowQuote[j].MQ = "0";
-                            m_arrsttFullRowQuote[j].TQO = "0";
-                            m_arrsttFullRowQuote[j].MC = "0";
-                        }
+                        m_arrsttFullRowQuote[j].MPO = "0";
+                        m_arrsttFullRowQuote[j].MQO = "0";
+                        m_arrsttFullRowQuote[j].MP = "0";
+                        m_arrsttFullRowQuote[j].MQ = "0";
+                        m_arrsttFullRowQuote[j].TQO = "0";
+                        m_arrsttFullRowQuote[j].MC = "0";
                     }
                 }
+                ///UPDATE LS (NEW)
+                //if (m_arrsttFullRowIndex.STAT_ControlCode != CGlobal.MARKET_STAT_ATO && m_arrsttFullRowIndex.STAT_ControlCode != CGlobal.MARKET_STAT_ATC)
+                //{
+                //}
                 //UPDATE FROOM (NEW)
                 if (true)
                 {
@@ -194,13 +200,14 @@ namespace Make_ET.Redis
                         }
                     }
                 }
+                return (m_arrsttFullRowQuote, intCe, intFl);
             }
             catch (Exception ex)
-            { throw ex; }
-
-            return m_arrsttFullRowQuote;
+            {
+                Logger.LogError("S5G_ET_QUOTE"+ex.Message);
+                throw ex; 
+            }
         }
-
         //Trả về quyền chuyển khoản
         private string GetRightStatus(CGlobal.SECURITY stt)
         {

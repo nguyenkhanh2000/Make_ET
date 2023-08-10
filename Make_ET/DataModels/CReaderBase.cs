@@ -55,11 +55,11 @@ namespace Make_ET.DataModels
         protected int m_intRowCountDone;        // so row da doc xong (VD: co 199 rows, da doc xong 24 rows => m_intRowCountDone=24)
         
         protected double m_dblDuration;         // thoi gian doc xong data tu file vao array (ms)
-        protected const string FORMAT_DATETIME_1 = "yyyy-MM-dd HH:mm:ss.fff"; // 2019-04-17 09:08:27 ngocta2 >> "HH:mm:ss" ko du du lieu debug, phai them ms => "HH:mm:ss.fff"
+        protected const string FORMAT_DATETIME_1 = "yyyy-MM-dd HH:mm:ss.fff"; //>> "HH:mm:ss" ko du du lieu debug, phai them ms => "HH:mm:ss.fff"
         protected string m_strFileName;         // TOTALMKT.DAT
 
         protected string m_strMonitorListenerURL;   // URL de send thong tin vao monitor
-                                                    // ======================= REDIS 2015-03-26 10:49:35 ngocta2 =======================
+                                                    //
         protected string m_strRedisKeyListCode = "";            // S5G_OTHER_HO_LIST_CODE
         protected string m_strRedisKeyListCodeID = "";          // S5G_OTHER_HO_LIST_CODEID
         protected string m_strRedisTempateKeyFull = "";         // S5G_FULL_HO_SECURITY_(RowID)
@@ -75,7 +75,7 @@ namespace Make_ET.DataModels
 
         //protected CRedisClient m_CRC = null;        //new CRedisClient("10.26.2.250", 6379);
         protected string m_strRedisPublishChannel = ""; // publish vao kenh nao (1 thread = read 1 file + publish data vao 1 channel)
-                                                        // ======================= /REDIS 2015-03-26 10:49:35 ngocta2 =======================
+                                                        
 
         // ======================= QuoteFeeder =======================
         protected string TYPE_SYSTEM_CHAR = "System.Char[]";

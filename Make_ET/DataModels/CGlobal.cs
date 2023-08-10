@@ -131,8 +131,7 @@ namespace Make_ET.DataModels
             public char[] OddLotFlag;               // Chứng khoán đang bị tạm dừng giao dịch hoặc giao dịch có được tiếp tục(đối với lô lẻ) string  1
 
             // ---------------------- /CW -----------------------------------
-
-            // 2014-12-16 17:27:35 ngocta2
+        
             // FAST-SPEED METHOD
             public override bool Equals(object obj)
             {

@@ -191,7 +191,7 @@ namespace Make_ET.Redis
             }
             catch (Exception ex)
             {
-                Logger.LogError("An error occurred: " + ex.Message);
+                Logger.LogError("S5G_ET_PT error occurred: " + ex.Message);
             }
             return m_arrstt_ROWPT;
         }

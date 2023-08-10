@@ -127,6 +127,7 @@ namespace Make_ET.DataModels
             //SECURITY
             this.m_crfSECURITY.FileName = "SECURITY";
             this.m_crfSECURITY.FilePath = Path.Combine(CConfig.directoryPath, m_crfSECURITY.FileName + ".dat");
+            #region
             //this.m_crfSECURITY.FileName = /*this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_FILENAME);// SECURITY*/   "SECURITY";
             //this.m_crfSECURITY.RedisKeyListCode = this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_REDISKEYLISTCODE);// "S5G_OTHER_HO_LIST_CODE";            
             //this.m_crfSECURITY.RedisKeyListCodeID = this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_REDISKEYLISTCODEID);//"S5G_OTHER_HO_LIST_CODEID";         
@@ -147,7 +148,7 @@ namespace Make_ET.DataModels
             //this.m_crfSECURITY.IsBuildUpdateSQL = /*Convert.ToBoolean(this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_ISBUILDUPDATESQL));//*/true;
             //this.m_crfSECURITY.SkipValueBigger = /*Convert.ToInt32(this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_SKIPVALUEBIGGER));*/ 99999;        // bo qua dong thua ETF
             //this.m_crfSECURITY.ThreadID = /*Convert.ToInt32(this.IniReadValue(CConfig.INI_SECTION_SECURITY, CConfig.INI_KEY_THREADID));*/ 1000;
-
+            #endregion
             //SECURITYOL
             this.m_crfSECURITYOL.FileName = "SECURITYOL";
             this.m_crfSECURITYOL.FilePath = Path.Combine(CConfig.directoryPath, m_crfSECURITYOL.FileName + ".dat");                    //@"D:\FPTS_Test\BACKUP28\SECURITYOL.dat";
@@ -203,15 +204,17 @@ namespace Make_ET.DataModels
             Logger.LogInfo("Update_FULL_Redis()");
             try
             {
+                int intCe = 0,intFl = 0;
+
                 this.Read_LAST_INDEX_HO();
 
+                S5G_ET_QUOTE et_quote = new S5G_ET_QUOTE();
+                (m_arrsttFullRowQuote,intCe,intFl) = et_quote.UpdateFullRowQuote(this.m_crfSECURITY.DataUpdate, this.m_crfLS.DataUpdate, this.m_crfOS.DataUpdate, this.m_crfFROOM.DataUpdate);
                 S5G_ET_INDEX et_index = new S5G_ET_INDEX();
+                
                 m_arrsttFullRowIndex = et_index.UpdateFULL_ROW_INDEX(m_LIH, m_crfMARKET_STAT.DataUpdate, m_crdVNIndex.DataUpdate, m_crdVN30Index.DataUpdate,
                     m_crdVN100Index.DataUpdate, m_crdVNAllIndex.DataUpdate, m_crdVNXAllIndex.DataUpdate, m_crdVNMidIndex.DataUpdate,
-                    m_crdVNSmlIndex.DataUpdate, m_crdINAV.DataUpdate, m_crdIINDEX.DataUpdate);
-
-                S5G_ET_QUOTE et_quote = new S5G_ET_QUOTE();
-                m_arrsttFullRowQuote = et_quote.UpdateFullRowQuote(this.m_crfSECURITY.DataUpdate, this.m_crfLS.DataUpdate, this.m_crfOS.DataUpdate, this.m_crfFROOM.DataUpdate , m_arrsttFullRowIndex);
+                    m_crdVNSmlIndex.DataUpdate, m_crdINAV.DataUpdate, m_crdIINDEX.DataUpdate,intCe,intFl); 
                 S5G_ET_PT et_pt = new S5G_ET_PT();
                 m_arrstt_ROWPT = et_pt.UpdateFULL_ROW_PT(m_arrsttFullRowQuote,this.m_crfSECURITY.DataUpdate, this.m_crfPUT_AD.DataUpdate, this.m_crfPUT_EXEC.DataUpdate, this.m_crfPUT_DC.DataUpdate);
 
@@ -565,8 +568,7 @@ namespace Make_ET.DataModels
                 Logger.LogError("An error occurred: " + ex.Message);
             }
             finally
-            {
-                
+            {               
             }
         }
         public void Redis_S5G__ET_INDEX()

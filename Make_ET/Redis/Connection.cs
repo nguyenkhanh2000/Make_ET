@@ -21,7 +21,7 @@ namespace Make_ET.Redis
             //Create a connection to redis
             _redisConnection = ConnectionMultiplexer.Connect(config);
 
-            //// Get a reference to the Redis database
+            // Get a reference to the Redis database
             //IDatabase db = _redisConnection.GetDatabase();
         }
         public static IDatabase GetRedisDatabase()
